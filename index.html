@@ -243,7 +243,6 @@
     <div class="sheet-handle"></div>
     <div class="sheet-title">Choose folder</div>
     <div class="breadcrumb" id="breadcrumb"></div>
-    <div class="sheet-scroll" id="pickerList"></div>
 
     <!-- New folder input (hidden by default) -->
     <div id="newFolderForm" style="display:none; padding:0 20px 8px; flex-shrink:0;">
@@ -256,10 +255,18 @@
       </div>
     </div>
 
+    <!-- New folder trigger button -->
+    <div style="padding:0 20px 8px; flex-shrink:0;">
+      <button onclick="showNewFolderForm()" style="width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:12px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New folder here
+      </button>
+    </div>
+
+    <div class="sheet-scroll" id="pickerList"></div>
     <div class="sheet-footer">
       <button class="select-here-btn" id="selectHereBtn" onclick="selectCurrentFolder()">📁 Save here</button>
-      <button onclick="showNewFolderForm()" style="background:none; border:1.5px solid var(--border); border-radius:12px; padding:13px 14px; color:var(--muted); font-size:13px; cursor:pointer; white-space:nowrap;">+ New folder</button>
-      <button class="cancel-btn" style="flex:0.6" onclick="closeOverlay('pickerOverlay')">Cancel</button>
+      <button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button>
     </div>
   </div>
 </div>
