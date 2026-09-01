@@ -429,6 +429,21 @@ async function loadFolder() {
   const list = document.getElementById('folderList');
   list.innerHTML = '<div class="sheet-msg"><div class="spinner" style="display:inline-block;margin-right:8px"></div>Loading…</div>';
 
+  // Test: first check if token works at all
+  try {
+    var testRes = await fetch('https://www.googleapis.com/drive/v3/about?fields=user', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    var testData = await testRes.json();
+    if (!testRes.ok) {
+      list.innerHTML = '<div class="sheet-err">Token invalid: ' + esc(testData.error && testData.error.message ? testData.error.message : JSON.stringify(testData)) + '</div>';
+      return;
+    }
+  } catch(e) {
+    list.innerHTML = '<div class="sheet-err">Network error on token test: ' + esc(e.message) + '</div>';
+    return;
+  }
+
   try {
     var folderId = curId();
     var query = folderId === 'root'
@@ -443,7 +458,7 @@ async function loadFolder() {
 
     if (!res.ok) {
       var err = await res.json();
-      list.innerHTML = '<div class="sheet-err">Error ' + res.status + ': ' + esc(err.error && err.error.message ? err.error.message : JSON.stringify(err)) + '</div>';
+      list.innerHTML = '<div class="sheet-err">Drive API Error ' + res.status + ': ' + esc(err.error && err.error.message ? err.error.message : JSON.stringify(err)) + '</div>';
       return;
     }
 
@@ -530,9 +545,11 @@ async function doUpload() {
   refreshBtn();
 }
 
-// ── Service Worker ──
+// Unregister any old service workers
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister(); });
+  });
 }
 </script>
 </body>
