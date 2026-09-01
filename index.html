@@ -441,7 +441,7 @@ function openFolderPicker() {
 
 async function loadFolderContents(folderId, folderName) {
   const list = document.getElementById('pickerList');
-  list.innerHTML = '<div class="sheet-loading"><div class="spinner"></div> Loading…</div>';
+  list.innerHTML = `<div class="sheet-loading"><div class="spinner"></div> Loading… ${accessToken ? '(token OK)' : '(NO TOKEN)'}</div>`;
   renderBreadcrumb();
 
   document.getElementById('selectHereBtn').textContent = `📁 Save here — ${folderName}`;
@@ -453,6 +453,12 @@ async function loadFolderContents(folderId, folderName) {
       { headers: { Authorization: 'Bearer ' + accessToken } }
     );
     const data = await res.json();
+
+    if (!res.ok) {
+      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error ${res.status}: ${JSON.stringify(data.error?.message || data)}</div>`;
+      return;
+    }
+
     const folders = data.files || [];
 
     if (folders.length === 0) {
@@ -471,7 +477,7 @@ async function loadFolderContents(folderId, folderName) {
         </svg>
       </div>`).join('');
   } catch(e) {
-    list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error loading folders</div>`;
+    list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Exception: ${e.message}</div>`;
     console.error(e);
   }
 }
