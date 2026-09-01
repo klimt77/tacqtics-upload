@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tacqtics · Upload</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg:#0F1A1F; --surface:#162028; --surface2:#1C2A34; --border:#243340;
+    --teal:#0F3342; --green:#62E87C; --green-dim:#3a8a4a;
+    --white:#F0F4F5; --muted:#7A9BAA; --danger:#E86262;
+    --radius:16px; --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--white); }
+  .app { width:100%; max-width:430px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; }
+
+  /* Header */
+  .header { display:flex; align-items:center; justify-content:space-between; padding:22px 20px 18px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .logo { display:flex; flex-direction:column; gap:3px; }
+  .logo-name { font-size:15px; font-weight:700; letter-spacing:0.14em; }
+  .logo-sub  { font-size:10px; letter-spacing:0.2em; color:var(--green); }
+  .icon-btn  { background:none; border:none; cursor:pointer; color:var(--muted); padding:8px; border-radius:10px; display:flex; align-items:center; transition:color .15s,background .15s; }
+  .icon-btn:hover { color:var(--white); background:var(--surface); }
+
+  /* Main */
+  .main { flex:1; display:flex; flex-direction:column; padding:28px 20px; gap:24px; overflow-y:auto; }
+  .section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+
+  /* Add doc buttons */
+  .add-doc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .add-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:26px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:border-color .15s,background .15s; color:var(--white); text-align:center; }
+  .add-btn:hover  { border-color:var(--green); background:#182d38; }
+  .add-btn:active { background:#1e3540; }
+  .add-btn-icon  { width:52px; height:52px; background:var(--teal); border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .add-btn-title { font-size:14px; font-weight:700; line-height:1.2; }
+  .add-btn-sub   { font-size:11px; color:var(--muted); line-height:1.4; }
+
+  /* Preview */
+  .preview-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .preview-bar  { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
+  .preview-bar-name { flex:1; min-width:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .clear-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; border-radius:6px; display:flex; transition:color .15s; }
+  .clear-btn:hover { color:var(--danger); }
+  .preview-img { width:100%; max-height:240px; object-fit:contain; background:#0a1318; display:block; }
+  .preview-pdf { padding:28px 20px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .preview-pdf-icon { color:var(--muted); }
+  .preview-pdf-name { font-size:14px; font-weight:600; }
+  .preview-pdf-size { font-size:12px; color:var(--muted); }
+
+  .spacer { flex:1; }
+
+  /* Status */
+  .status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; line-height:1.5; }
+  .status-box.loading { background:#1a2e38; color:var(--muted); }
+  .status-box.success { background:#0d2318; color:var(--green); border:1px solid var(--green-dim); }
+  .status-box.error   { background:#2a0f0f; color:var(--danger); border:1px solid #5a2020; }
+  .status-box a { color:var(--green); }
+  .spinner { width:16px; height:16px; flex-shrink:0; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* Upload-to */
+  .upload-to-section { display:flex; flex-direction:column; gap:10px; }
+  .folder-bar { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color .15s; }
+  .folder-bar:hover { border-color:var(--green-dim); }
+  .drive-logo { width:28px; height:28px; flex-shrink:0; }
+  .folder-bar-info { flex:1; min-width:0; }
+  .folder-bar-label { font-size:10px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+  .folder-bar-name  { font-size:14px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .folder-bar-name.empty { color:var(--muted); font-weight:400; font-size:13px; }
+  .folder-chevron { color:var(--muted); flex-shrink:0; }
+
+  .send-btn { background:var(--green); color:#071a0e; border:none; border-radius:var(--radius); padding:18px; font-size:15px; font-weight:700; cursor:pointer; width:100%; transition:opacity .15s; letter-spacing:0.02em; }
+  .send-btn:hover { opacity:.9; }
+  .send-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; opacity:1; }
+
+  /* Overlay / Sheet */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+  .overlay.hidden { display:none; }
+  .sheet { background:var(--surface2); border-radius:22px 22px 0 0; padding:0 0 32px; width:100%; max-width:430px; max-height:80vh; display:flex; flex-direction:column; animation:slideUp .22s cubic-bezier(.32,0,.38,1); }
+  @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:none;opacity:1} }
+  .sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; flex-shrink:0; }
+  .sheet-title  { font-size:17px; font-weight:700; padding:18px 20px 4px; flex-shrink:0; }
+  .sheet-sub    { font-size:12px; color:var(--muted); padding:0 20px 14px; flex-shrink:0; }
+  .sheet-scroll { flex:1; overflow-y:auto; padding:0 20px; display:flex; flex-direction:column; gap:6px; }
+  .sheet-footer { padding:14px 20px; flex-shrink:0; }
+
+  /* Folder items — grouped */
+  .folder-group-label { font-size:10px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; padding:12px 0 6px; }
+  .folder-item { display:flex; align-items:center; gap:10px; padding:13px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; color:var(--white); transition:border-color .15s; font-size:14px; }
+  .folder-item:hover  { border-color:var(--green-dim); }
+  .folder-item.active { border-color:var(--green); }
+  .folder-item-icon  { color:var(--muted); flex-shrink:0; }
+  .folder-item-name  { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .folder-item-check { color:var(--green); flex-shrink:0; }
+  .folder-item-sub   { font-size:11px; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+
+  .cancel-btn { width:100%; background:none; border:1.5px solid var(--border); border-radius:12px; padding:14px; color:var(--muted); font-size:14px; font-weight:500; cursor:pointer; transition:color .15s,border-color .15s; }
+  .cancel-btn:hover { color:var(--white); border-color:var(--muted); }
+
+  input[type="file"] { display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="logo">
+      <span class="logo-name">TACQTICS</span>
+      <span class="logo-sub">Tech &amp; Talent</span>
+    </div>
+    <button class="icon-btn" title="Settings" onclick="openSettings()">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="main">
+    <!-- Add document -->
+    <section>
+      <div class="section-label">Add document</div>
+      <div class="add-doc-row">
+        <button class="add-btn" onclick="openCamera()">
+          <div class="add-btn-icon">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <div class="add-btn-title">Use camera</div>
+          <div class="add-btn-sub">Take a photo</div>
+        </button>
+        <button class="add-btn" onclick="openFilePicker()">
+          <div class="add-btn-icon">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div class="add-btn-title">From device</div>
+          <div class="add-btn-sub">Photo or PDF</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Preview -->
+    <div class="preview-wrap" id="previewWrap" style="display:none">
+      <div class="preview-bar">
+        <span class="preview-bar-name" id="previewName"></span>
+        <button class="clear-btn" onclick="clearFile()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div id="previewBody"></div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-box" id="statusBox" style="display:none">
+      <div class="spinner" id="statusSpinner" style="display:none"></div>
+      <span id="statusMsg"></span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Upload to -->
+    <section class="upload-to-section">
+      <div class="section-label">Upload to</div>
+      <div class="folder-bar" onclick="openFolderPicker()">
+        <svg class="drive-logo" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+          <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+          <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47"/>
+          <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+          <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+          <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+          <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 27h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+        </svg>
+        <div class="folder-bar-info">
+          <div class="folder-bar-label">Google Drive</div>
+          <div class="folder-bar-name empty" id="folderBarName">Choose a folder…</div>
+        </div>
+        <svg class="folder-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="doUpload()" disabled>Send to Drive</button>
+    </section>
+  </main>
+</div>
+
+<!-- Folder picker sheet -->
+<div class="overlay hidden" id="pickerOverlay" onclick="overlayClick(event,'pickerOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Choose folder</div>
+    <div class="sheet-sub">Select where to save your file in Google Drive.</div>
+    <div class="sheet-scroll" id="pickerList"></div>
+    <div class="sheet-footer"><button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- Settings sheet -->
+<div class="overlay hidden" id="settingsOverlay" onclick="overlayClick(event,'settingsOverlay')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Settings</div>
+    <div class="sheet-sub">The selected folder will be remembered as your default.</div>
+    <div class="sheet-scroll" id="settingsList"></div>
+    <div class="sheet-footer"><button class="cancel-btn" onclick="closeOverlay('settingsOverlay')">Done</button></div>
+  </div>
+</div>
+
+<!-- Camera: capture=environment forces rear camera on mobile -->
+<input type="file" id="cameraInput" accept="image/*" capture="environment">
+<!-- File: explicit list -->
+<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf">
+
+<script>
+// ── Drive folders — baked in from live fetch ──
+const DRIVE_FOLDERS = [
+  // Tacqtics (most relevant first)
+  {id:"1-85qoBjE1crUvBghTFq8QtMjXNZ5Dhzr", name:"expenses",               group:"Tacqtics"},
+  {id:"1lsBux3bjOqDbeyT3rbgdWnWgeeH-WysS", name:"Note de frais juillet",   group:"Tacqtics"},
+  {id:"1AJVZe5XY8j2jNBTxXkAG_cigVgTbg_QW", name:"toutes les factures (avr 2026+)", group:"Tacqtics"},
+  {id:"1qnSheIq38Zfflb6HUGT9bxEyx0TSEkVX", name:"Financials",              group:"Tacqtics"},
+  {id:"1_7RECSzJ-riqy__gVxSuDb5aBAPAdRg0", name:"Administratif",           group:"Tacqtics"},
+  {id:"1h_lrp3iA4cABac8jjFQ0LypF8Iwcb_Zp", name:"Business License 2026",  group:"Tacqtics"},
+  {id:"1BLKxy-jM9DC6NvbVd2OnkhqqvrWAjBEr", name:"Tacqtics (root)",         group:"Tacqtics"},
+  {id:"1l_mZy9MpocGxyO_XHFEM_XFS1-gEhVNy", name:"Clients",                 group:"Tacqtics"},
+  {id:"1PGbJ4TDX1ci-eQUAXep-Rssjp3euxMWj", name:"Contract & Business Model",group:"Tacqtics"},
+  {id:"1OiZwnATRCOPU5LEVdv2bxEYBsItJddfR", name:"Presentations",           group:"Tacqtics"},
+  // Other
+  {id:"1a6dM6kBYuc6mV7i0pxvhn55yoYSjPc9B", name:"Fermeture compte SG",    group:"Other"},
+  {id:"1M-ceZ5XXurqdKz55tUB3e8roFGYbnVDR", name:"Passeports",              group:"Other"},
+  {id:"16jIbk15iRCUPvMe_Ff5zUvPdqQeLahva", name:"CVs à partager",          group:"Other"},
+  {id:"1WUXiFy4ndh_40R2rxH-_S1xFobvYqCaO", name:"Testaments (parent)",     group:"Other"},
+];
+
+const FOLDER_KEY = 'tq_last_folder';
+let file   = null;
+let folder = null;
+
+// Restore last folder
+try {
+  const s = localStorage.getItem(FOLDER_KEY);
+  if (s) setFolder(JSON.parse(s), false);
+} catch(_) {}
+
+// ── Inputs ──
+document.getElementById('cameraInput').addEventListener('change', e => onFile(e.target.files[0]));
+document.getElementById('fileInput').addEventListener('change',   e => onFile(e.target.files[0]));
+
+function openCamera()     {
+  // On mobile this opens native camera; on desktop shows file picker
+  document.getElementById('cameraInput').click();
+}
+function openFilePicker() { document.getElementById('fileInput').click(); }
+
+// ── File ──
+function onFile(f) {
+  if (!f) return;
+  file = f;
+  document.getElementById('previewName').textContent = f.name;
+  const body = document.getElementById('previewBody');
+  if (f.type.startsWith('image/')) {
+    body.innerHTML = `<img class="preview-img" src="${URL.createObjectURL(f)}" alt="preview">`;
+  } else {
+    const kb = (f.size/1024).toFixed(0);
+    body.innerHTML = `<div class="preview-pdf">
+      <svg class="preview-pdf-icon" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+      </svg>
+      <div class="preview-pdf-name">${esc(f.name)}</div>
+      <div class="preview-pdf-size">${kb} KB · PDF</div>
+    </div>`;
+  }
+  document.getElementById('previewWrap').style.display = 'block';
+  refreshBtn(); clearStatus();
+}
+
+function clearFile() {
+  file = null;
+  document.getElementById('previewWrap').style.display = 'none';
+  document.getElementById('cameraInput').value = '';
+  document.getElementById('fileInput').value   = '';
+  refreshBtn(); clearStatus();
+}
+
+// ── Folder ──
+function setFolder(f, save=true) {
+  folder = f;
+  const el = document.getElementById('folderBarName');
+  el.textContent = f.name; el.classList.remove('empty');
+  if (save) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
+  refreshBtn();
+}
+function refreshBtn() {
+  document.getElementById('sendBtn').disabled = !(file && folder);
+}
+
+// ── Status ──
+function showStatus(type, html) {
+  const b = document.getElementById('statusBox');
+  b.className = 'status-box '+type; b.style.display = 'flex';
+  document.getElementById('statusSpinner').style.display = type==='loading'?'flex':'none';
+  document.getElementById('statusMsg').innerHTML = html;
+}
+function clearStatus() { document.getElementById('statusBox').style.display='none'; }
+
+// ── Sheets ──
+function overlayClick(e, id) { if(e.target===document.getElementById(id)) closeOverlay(id); }
+function closeOverlay(id)     { document.getElementById(id).classList.add('hidden'); }
+
+function openFolderPicker() {
+  document.getElementById('pickerOverlay').classList.remove('hidden');
+  renderList('pickerList', false);
+}
+function openSettings() {
+  document.getElementById('settingsOverlay').classList.remove('hidden');
+  renderList('settingsList', true);
+}
+
+function renderList(listId, isSettings) {
+  const list = document.getElementById(listId);
+  // Group by Tacqtics / Other
+  const groups = {};
+  DRIVE_FOLDERS.forEach(f => { (groups[f.group]||(groups[f.group]=[])).push(f); });
+  let html = '';
+  for (const [g, items] of Object.entries(groups)) {
+    html += `<div class="folder-group-label">${g}</div>`;
+    items.forEach(f => {
+      const active = folder && folder.id === f.id;
+      html += `<div class="folder-item ${active?'active':''}" onclick="pickFolder('${f.id}','${escAttr(f.name)}',${isSettings})">
+        <svg class="folder-item-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="folder-item-name">${esc(f.name)}</span>
+        ${active?`<svg class="folder-item-check" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+      </div>`;
+    });
+  }
+  list.innerHTML = html;
+}
+
+function pickFolder(id, name, isSettings) {
+  setFolder({id, name});
+  renderList('pickerList', false);
+  renderList('settingsList', true);
+  closeOverlay(isSettings ? 'settingsOverlay' : 'pickerOverlay');
+}
+
+// ── Upload via MCP ──
+async function doUpload() {
+  if (!file || !folder) return;
+  document.getElementById('sendBtn').disabled = true;
+  showStatus('loading', 'Uploading to Drive…');
+  try {
+    const b64  = await readBase64(file);
+    const mime = file.type || 'application/octet-stream';
+    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6', max_tokens:1000,
+        system:`You upload files to Google Drive via MCP. After uploading return ONLY JSON: {"fileId":"...","webViewLink":"..."}. No markdown.`,
+        messages:[{role:'user', content:[
+          { type: mime.startsWith('image/') ? 'image' : 'document',
+            source:{type:'base64', media_type:mime, data:b64} },
+          { type:'text', text:`Upload this file to Google Drive folder ID "${folder.id}" with filename "${file.name}". Return JSON with fileId and webViewLink.` }
+        ]}],
+        mcp_servers:[{type:'url', url:'https://drivemcp.googleapis.com/mcp/v1', name:'gdrive'}]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content.map(b => b.type==='text'?b.text:(b.content?.[0]?.text||'')).join(' ');
+    const lm  = txt.match(/https:\/\/drive\.google\.com[^\s"')>]+/);
+    if (lm) {
+      showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong> &nbsp;·&nbsp; <a href="${lm[0]}" target="_blank">Open in Drive →</a>`);
+    } else if (/success|uploaded|created/i.test(txt)) {
+      showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong>`);
+    } else {
+      showStatus('error', 'Something went wrong. Please try again.');
+    }
+  } catch(e) {
+    showStatus('error', 'Upload failed: ' + e.message);
+  }
+  refreshBtn();
+}
+
+function readBase64(f) {
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=()=>rej(new Error('Read failed'));
+    r.readAsDataURL(f);
+  });
+}
+function esc(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+</script>
+</body>
+</html>
