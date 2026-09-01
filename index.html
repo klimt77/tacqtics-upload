@@ -244,26 +244,28 @@
     <div class="sheet-title">Choose folder</div>
     <div class="breadcrumb" id="breadcrumb"></div>
 
-    <!-- New folder input (hidden by default) -->
+    <!-- New folder form (hidden by default) -->
     <div id="newFolderForm" style="display:none; padding:0 20px 8px; flex-shrink:0;">
       <div style="display:flex; gap:8px;">
         <input id="newFolderName" type="text" placeholder="Folder name…"
           style="flex:1; background:var(--surface); border:1.5px solid var(--green-dim); border-radius:10px; padding:12px 14px; color:var(--white); font-size:14px; outline:none;"
           onkeydown="if(event.key==='Enter') createFolder()">
-        <button onclick="createFolder()" style="background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer;">Create</button>
+        <button id="createFolderBtn" onclick="createFolder()" style="background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer;">Create</button>
         <button onclick="cancelNewFolder()" style="background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); cursor:pointer;">✕</button>
       </div>
     </div>
 
-    <!-- New folder trigger button -->
-    <div style="padding:0 20px 8px; flex-shrink:0;">
-      <button onclick="showNewFolderForm()" style="width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:12px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <!-- New folder trigger — always visible -->
+    <div id="newFolderTrigger" style="padding:0 20px 8px; flex-shrink:0;">
+      <button onclick="showNewFolderForm()" style="width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:11px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New folder here
       </button>
     </div>
 
+    <!-- Folder list — only this gets rewritten -->
     <div class="sheet-scroll" id="pickerList"></div>
+
     <div class="sheet-footer">
       <button class="select-here-btn" id="selectHereBtn" onclick="selectCurrentFolder()">📁 Save here</button>
       <button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button>
@@ -278,7 +280,7 @@
 
 <script>
 const CLIENT_ID  = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
-const SCOPES     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly';
+const SCOPES     = 'https://www.googleapis.com/auth/drive';
 const FOLDER_KEY = 'tq_last_folder';
 
 let accessToken = null;
@@ -442,7 +444,6 @@ async function loadFolderContents(folderId, folderName) {
   list.innerHTML = '<div class="sheet-loading"><div class="spinner"></div> Loading…</div>';
   renderBreadcrumb();
 
-  // Update select-here button label
   document.getElementById('selectHereBtn').textContent = `📁 Save here — ${folderName}`;
 
   try {
