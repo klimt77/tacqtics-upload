@@ -11,146 +11,125 @@
 <meta name="apple-mobile-web-app-title" content="OTACQ">
 <link rel="apple-touch-icon" href="logo.png">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg:#0F1A1F; --surface:#162028; --surface2:#1C2A34; --border:#243340;
-    --teal:#0F3342; --green:#62E87C; --green-dim:#3a8a4a;
-    --white:#F0F4F5; --muted:#7A9BAA; --danger:#E86262;
-    --radius:16px; --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  }
-  html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--white); }
-  .app { width:100%; max-width:430px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg:#0F1A1F; --surface:#162028; --surface2:#1C2A34; --border:#243340;
+  --teal:#0F3342; --green:#62E87C; --green-dim:#3a8a4a;
+  --white:#F0F4F5; --muted:#7A9BAA; --danger:#E86262;
+  --radius:16px; --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--white); }
+.app { width:100%; max-width:430px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; }
 
-  /* Header */
-  .header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0; }
-  .logo { display:flex; align-items:center; gap:10px; }
-  .logo-img { width:36px; height:36px; border-radius:8px; object-fit:contain; }
-  .logo-text { display:flex; flex-direction:column; gap:2px; }
-  .logo-name { font-size:14px; font-weight:700; letter-spacing:0.14em; }
-  .logo-sub  { font-size:9px; letter-spacing:0.2em; color:var(--green); }
-  .icon-btn  { background:none; border:none; cursor:pointer; color:var(--muted); padding:8px; border-radius:10px; display:flex; align-items:center; transition:color .15s,background .15s; }
-  .icon-btn:hover { color:var(--white); background:var(--surface); }
+.header { display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0; gap:10px; }
+.logo-img { width:36px; height:36px; border-radius:8px; object-fit:contain; }
+.logo-name { font-size:14px; font-weight:700; letter-spacing:0.14em; }
+.logo-sub  { font-size:9px; letter-spacing:0.2em; color:var(--green); }
 
-  /* Auth */
-  .auth-banner { margin:16px 20px 0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center; }
-  .auth-banner-title { font-size:14px; font-weight:600; }
-  .auth-banner-sub { font-size:12px; color:var(--muted); line-height:1.5; }
-  .google-btn { display:flex; align-items:center; gap:10px; background:#fff; color:#1f1f1f; border:none; border-radius:10px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; transition:box-shadow .15s; }
-  .google-btn:hover { box-shadow:0 2px 8px rgba(0,0,0,0.3); }
-  .auth-user { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--green); }
-  .auth-signout { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline; }
-  .auth-connected { margin:12px 20px 0; background:var(--surface); border:1px solid var(--green-dim); border-radius:var(--radius); padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
+.auth-banner { margin:16px 20px 0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center; }
+.auth-title { font-size:14px; font-weight:600; }
+.auth-sub   { font-size:12px; color:var(--muted); line-height:1.5; }
+.google-btn { display:flex; align-items:center; gap:10px; background:#fff; color:#1f1f1f; border:none; border-radius:10px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; }
+.auth-connected { margin:12px 20px 0; background:var(--surface); border:1px solid var(--green-dim); border-radius:var(--radius); padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
+.auth-user { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--green); }
+.auth-signout { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline; }
 
-  /* Main */
-  .main { flex:1; display:flex; flex-direction:column; padding:24px 20px; gap:22px; overflow-y:auto; }
-  .section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+.main { flex:1; display:flex; flex-direction:column; padding:24px 20px; gap:22px; overflow-y:auto; }
+.section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
 
-  /* Add doc */
-  .add-doc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .add-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:26px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:border-color .15s,background .15s; color:var(--white); text-align:center; }
-  .add-btn:hover  { border-color:var(--green); background:#182d38; }
-  .add-btn:active { background:#1e3540; }
-  .add-btn:disabled { opacity:0.4; cursor:not-allowed; }
-  .add-btn-icon  { width:52px; height:52px; background:var(--teal); border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--green); }
-  .add-btn-title { font-size:14px; font-weight:700; }
-  .add-btn-sub   { font-size:11px; color:var(--muted); }
+.add-doc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.add-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:26px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; color:var(--white); text-align:center; transition:border-color .15s; }
+.add-btn:not(:disabled):hover { border-color:var(--green); background:#182d38; }
+.add-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.add-btn-icon  { width:52px; height:52px; background:var(--teal); border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+.add-btn-title { font-size:14px; font-weight:700; }
+.add-btn-sub   { font-size:11px; color:var(--muted); }
 
-  /* Preview */
-  .preview-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-  .preview-bar  { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
-  .preview-bar-name { flex:1; min-width:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .clear-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; display:flex; }
-  .clear-btn:hover { color:var(--danger); }
-  .preview-img { width:100%; max-height:240px; object-fit:contain; background:#0a1318; display:block; }
-  .preview-pdf { padding:24px; display:flex; flex-direction:column; align-items:center; gap:8px; }
-  .preview-pdf-icon { color:var(--muted); }
-  .preview-pdf-name { font-size:14px; font-weight:600; }
-  .preview-pdf-size { font-size:12px; color:var(--muted); }
+.preview-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.preview-bar  { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
+.preview-bar-name { flex:1; min-width:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.clear-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; display:flex; }
+.preview-img { width:100%; max-height:240px; object-fit:contain; background:#0a1318; display:block; }
+.preview-pdf { padding:24px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.preview-pdf-name { font-size:14px; font-weight:600; }
+.preview-pdf-size { font-size:12px; color:var(--muted); }
 
-  .spacer { flex:1; min-height:12px; }
+.spacer { flex:1; min-height:12px; }
 
-  /* Status */
-  .status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; line-height:1.5; }
-  .status-box.loading { background:#1a2e38; color:var(--muted); }
-  .status-box.success { background:#0d2318; color:var(--green); border:1px solid var(--green-dim); }
-  .status-box.error   { background:#2a0f0f; color:var(--danger); border:1px solid #5a2020; }
-  .status-box a { color:var(--green); }
-  .spinner { width:16px; height:16px; flex-shrink:0; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+.status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; line-height:1.5; }
+.status-box.loading { background:#1a2e38; color:var(--muted); }
+.status-box.success { background:#0d2318; color:var(--green); border:1px solid var(--green-dim); }
+.status-box.error   { background:#2a0f0f; color:var(--danger); border:1px solid #5a2020; }
+.status-box a { color:var(--green); }
+.spinner { width:16px; height:16px; flex-shrink:0; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-  /* Upload to */
-  .upload-to-section { display:flex; flex-direction:column; gap:10px; }
-  .folder-bar { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color .15s; }
-  .folder-bar:hover { border-color:var(--green-dim); }
-  .drive-logo { width:26px; height:26px; flex-shrink:0; }
-  .folder-bar-info { flex:1; min-width:0; }
-  .folder-bar-label { font-size:10px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
-  .folder-bar-name  { font-size:14px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .folder-bar-name.empty { color:var(--muted); font-weight:400; font-size:13px; }
-  .folder-chevron { color:var(--muted); flex-shrink:0; }
+.upload-to-section { display:flex; flex-direction:column; gap:10px; }
+.folder-bar { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color .15s; }
+.folder-bar:hover { border-color:var(--green-dim); }
+.drive-logo { width:26px; height:26px; flex-shrink:0; }
+.folder-bar-info { flex:1; min-width:0; }
+.folder-bar-label { font-size:10px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+.folder-bar-name  { font-size:14px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.folder-bar-name.empty { color:var(--muted); font-weight:400; font-size:13px; }
+.folder-chevron { color:var(--muted); flex-shrink:0; }
 
-  .send-btn { background:var(--green); color:#071a0e; border:none; border-radius:var(--radius); padding:18px; font-size:15px; font-weight:700; cursor:pointer; width:100%; transition:opacity .15s; }
-  .send-btn:hover { opacity:.9; }
-  .send-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; opacity:1; }
+.send-btn { background:var(--green); color:#071a0e; border:none; border-radius:var(--radius); padding:18px; font-size:15px; font-weight:700; cursor:pointer; width:100%; }
+.send-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
 
-  /* Overlay */
-  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
-  .overlay.hidden { display:none; }
-  .sheet { background:var(--surface2); border-radius:22px 22px 0 0; padding:0 0 32px; width:100%; max-width:430px; max-height:85vh; display:flex; flex-direction:column; animation:slideUp .22s cubic-bezier(.32,0,.38,1); }
-  @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:none;opacity:1} }
-  .sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; flex-shrink:0; }
-  .sheet-title  { font-size:17px; font-weight:700; padding:18px 20px 0; flex-shrink:0; }
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+.overlay.hidden { display:none; }
+.sheet { background:var(--surface2); border-radius:22px 22px 0 0; width:100%; max-width:430px; max-height:85vh; display:flex; flex-direction:column; animation:slideUp .22s ease; }
+@keyframes slideUp { from{transform:translateY(50px);opacity:0} to{transform:none;opacity:1} }
+.sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; flex-shrink:0; }
+.sheet-title  { font-size:17px; font-weight:700; padding:16px 20px 0; flex-shrink:0; }
 
-  /* Breadcrumb */
-  .breadcrumb { display:flex; align-items:center; gap:4px; padding:10px 20px 4px; flex-shrink:0; flex-wrap:wrap; }
-  .breadcrumb-item { font-size:12px; color:var(--muted); cursor:pointer; }
-  .breadcrumb-item:hover { color:var(--white); }
-  .breadcrumb-item.current { color:var(--white); cursor:default; }
-  .breadcrumb-sep { color:var(--border); font-size:12px; }
+.breadcrumb { display:flex; align-items:center; gap:4px; padding:8px 20px 4px; flex-shrink:0; flex-wrap:wrap; }
+.bc-item { font-size:12px; color:var(--muted); cursor:pointer; }
+.bc-item:last-child { color:var(--white); cursor:default; }
+.bc-sep { color:var(--border); font-size:12px; }
 
-  .sheet-scroll { flex:1; overflow-y:auto; padding:8px 20px 0; display:flex; flex-direction:column; gap:6px; }
-  .sheet-footer { padding:14px 20px; flex-shrink:0; display:flex; gap:8px; }
+.new-folder-trigger { padding:0 20px 8px; flex-shrink:0; }
+.new-folder-trigger button { width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:11px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+.new-folder-form { display:none; padding:0 20px 8px; flex-shrink:0; }
+.new-folder-form .row { display:flex; gap:8px; }
+.new-folder-form input { flex:1; background:var(--surface); border:1.5px solid var(--green-dim); border-radius:10px; padding:12px 14px; color:var(--white); font-size:14px; outline:none; }
+.new-folder-form .btn-create { background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer; }
+.new-folder-form .btn-cancel { background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); cursor:pointer; }
 
-  /* Folder items */
-  .folder-item { display:flex; align-items:center; gap:10px; padding:13px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; color:var(--white); transition:border-color .15s; font-size:14px; }
-  .folder-item:hover  { border-color:var(--green-dim); }
-  .folder-item.active { border-color:var(--green); }
-  .folder-item-icon  { color:var(--muted); flex-shrink:0; }
-  .folder-item-name  { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .folder-item-check { color:var(--green); flex-shrink:0; }
-  .folder-item-arrow { color:var(--muted); flex-shrink:0; }
+.sheet-scroll { flex:1; overflow-y:auto; padding:4px 20px 0; display:flex; flex-direction:column; gap:6px; }
+.sheet-footer { padding:14px 20px; flex-shrink:0; display:flex; gap:8px; }
 
-  .sheet-loading { padding:32px 0; text-align:center; color:var(--muted); font-size:13px; display:flex; align-items:center; justify-content:center; gap:10px; }
-  .sheet-empty   { padding:24px 0; text-align:center; color:var(--muted); font-size:13px; }
+.folder-item { display:flex; align-items:center; gap:10px; padding:13px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; color:var(--white); transition:border-color .15s; font-size:14px; }
+.folder-item:hover { border-color:var(--green-dim); }
+.fi-icon  { color:var(--muted); flex-shrink:0; }
+.fi-name  { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fi-arrow { color:var(--muted); flex-shrink:0; }
 
-  .select-here-btn { background:var(--teal); border:1.5px solid var(--green-dim); border-radius:12px; padding:13px 16px; color:var(--green); font-size:14px; font-weight:600; cursor:pointer; text-align:center; }
-  .select-here-btn:hover { background:#1a3d50; }
+.sheet-msg { padding:24px 0; text-align:center; color:var(--muted); font-size:13px; }
+.sheet-err { padding:24px 0; text-align:center; color:var(--danger); font-size:13px; }
 
-  .cancel-btn { flex:1; background:none; border:1.5px solid var(--border); border-radius:12px; padding:14px; color:var(--muted); font-size:14px; cursor:pointer; }
-  .cancel-btn:hover { color:var(--white); border-color:var(--muted); }
+.btn-save   { flex:1; background:var(--teal); border:1.5px solid var(--green-dim); border-radius:12px; padding:14px; color:var(--green); font-size:14px; font-weight:600; cursor:pointer; }
+.btn-cancel { flex:1; background:none; border:1.5px solid var(--border); border-radius:12px; padding:14px; color:var(--muted); font-size:14px; cursor:pointer; }
 
-  input[type="file"] { display:none; }
-  .hidden { display:none !important; }
+input[type="file"] { display:none; }
+.hidden { display:none !important; }
 </style>
 </head>
 <body>
 <div class="app">
 
   <header class="header">
-    <div class="logo">
-      <img class="logo-img" src="logo.png" alt="Tacqtics" onerror="this.style.display='none'">
-      <div class="logo-text">
-        <span class="logo-name">TACQTICS</span>
-        <span class="logo-sub">Tech &amp; Talent</span>
-      </div>
+    <img class="logo-img" src="logo.png" alt="" onerror="this.style.display='none'">
+    <div>
+      <div class="logo-name">TACQTICS</div>
+      <div class="logo-sub">Tech &amp; Talent</div>
     </div>
-
   </header>
 
-  <!-- Auth -->
   <div class="auth-banner" id="authBanner">
-    <div class="auth-banner-title">Connect Google Drive</div>
-    <div class="auth-banner-sub">Sign in once to upload files directly to your Drive.</div>
+    <div class="auth-title">Connect Google Drive</div>
+    <div class="auth-sub">Sign in to upload files directly to your Drive.</div>
     <button class="google-btn" onclick="signIn()">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
       Sign in with Google
@@ -160,7 +139,7 @@
   <div class="auth-connected hidden" id="authConnected">
     <div class="auth-user">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <span id="authUserName">Connected to Google Drive</span>
+      Connected to Google Drive
     </div>
     <button class="auth-signout" onclick="signOut()">Sign out</button>
   </div>
@@ -172,8 +151,7 @@
         <button class="add-btn" id="cameraBtn" onclick="openCamera()" disabled>
           <div class="add-btn-icon">
             <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
             </svg>
           </div>
           <div class="add-btn-title">Use camera</div>
@@ -184,8 +162,7 @@
             <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
-              <line x1="12" y1="18" x2="12" y2="12"/>
-              <line x1="9" y1="15" x2="15" y2="15"/>
+              <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
             </svg>
           </div>
           <div class="add-btn-title">From device</div>
@@ -215,7 +192,7 @@
 
     <section class="upload-to-section">
       <div class="section-label">Upload to</div>
-      <div class="folder-bar" onclick="openFolderPicker()">
+      <div class="folder-bar" onclick="openPicker()">
         <svg class="drive-logo" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
           <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
           <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47"/>
@@ -237,114 +214,88 @@
   </main>
 </div>
 
-<!-- Folder browser overlay -->
-<div class="overlay hidden" id="pickerOverlay" onclick="overlayClick(event,'pickerOverlay')">
-  <div class="sheet" onclick="event.stopPropagation()">
+<!-- Folder picker -->
+<div class="overlay hidden" id="pickerOverlay" onclick="if(event.target===this)closeOverlay()">
+  <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Choose folder</div>
     <div class="breadcrumb" id="breadcrumb"></div>
 
-    <!-- New folder form (hidden by default) -->
-    <div id="newFolderForm" style="display:none; padding:0 20px 8px; flex-shrink:0;">
-      <div style="display:flex; gap:8px;">
-        <input id="newFolderName" type="text" placeholder="Folder name…"
-          style="flex:1; background:var(--surface); border:1.5px solid var(--green-dim); border-radius:10px; padding:12px 14px; color:var(--white); font-size:14px; outline:none;"
-          onkeydown="if(event.key==='Enter') createFolder()">
-        <button id="createFolderBtn" onclick="createFolder()" style="background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer;">Create</button>
-        <button onclick="cancelNewFolder()" style="background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); cursor:pointer;">✕</button>
-      </div>
-    </div>
-
-    <!-- New folder trigger — always visible -->
-    <div id="newFolderTrigger" style="padding:0 20px 8px; flex-shrink:0;">
-      <button onclick="showNewFolderForm()" style="width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:11px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+    <div class="new-folder-trigger" id="nfTrigger">
+      <button onclick="showNFForm()">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New folder here
       </button>
     </div>
+    <div class="new-folder-form" id="nfForm">
+      <div class="row">
+        <input id="nfInput" type="text" placeholder="Folder name…" onkeydown="if(event.key==='Enter')doCreateFolder()">
+        <button class="btn-create" id="nfCreateBtn" onclick="doCreateFolder()">Create</button>
+        <button class="btn-cancel" onclick="hideNFForm()">✕</button>
+      </div>
+    </div>
 
-    <!-- Folder list — only this gets rewritten -->
-    <div class="sheet-scroll" id="pickerList"></div>
+    <div class="sheet-scroll" id="folderList"></div>
 
     <div class="sheet-footer">
-      <button class="select-here-btn" id="selectHereBtn" onclick="selectCurrentFolder()">📁 Save here</button>
-      <button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button>
+      <button class="btn-save" id="saveHereBtn" onclick="saveHere()">📁 Save here</button>
+      <button class="btn-cancel" onclick="closeOverlay()">Cancel</button>
     </div>
   </div>
 </div>
-
-
 
 <input type="file" id="cameraInput" accept="image/*" capture="environment">
 <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf">
 
 <script>
-const CLIENT_ID  = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
-const SCOPES     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
-const FOLDER_KEY = 'tq_last_folder';
+'use strict';
 
-let accessToken = null;
+const CLIENT_ID   = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
+const SCOPES      = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
+const REDIRECT    = 'https://klimt77.github.io/tacqtics-upload/';
+const TOKEN_KEY   = 'tq_token';
+const EXPIRY_KEY  = 'tq_expiry';
+const FOLDER_KEY  = 'tq_folder';
+
+// ── State ──
+let token  = null;
 let file   = null;
-let folder = null; // {id, name}
+let folder = null;
 
-// Picker browser state
-let currentFolderId   = 'root';
-let currentFolderName = 'My Drive';
-let breadcrumbs = [{id:'root', name:'My Drive'}];
+// Folder browser
+let stack = [{id:'root', name:'My Drive'}];
+function curId()   { return stack[stack.length-1].id; }
+function curName() { return stack[stack.length-1].name; }
 
-
-
-// Restore last folder
-try {
-  const s = localStorage.getItem(FOLDER_KEY);
-  if (s) setFolder(JSON.parse(s), false);
-} catch(_) {}
-
-// ── OAuth — redirect flow (works in PWA standalone) ──
-const REDIRECT_URI = 'https://klimt77.github.io/tacqtics-upload/';
-const TOKEN_KEY    = 'tq_token';
-const TOKEN_EXP_KEY = 'tq_token_exp';
-
-function signIn() {
-  const params = new URLSearchParams({
-    client_id: CLIENT_ID,
-    redirect_uri: REDIRECT_URI,
-    response_type: 'token',
-    scope: SCOPES,
-    include_granted_scopes: 'true',
-    prompt: 'consent',
-    state: 'signin'
-  });
-  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+// ── Helpers ──
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escQ(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 }
 
-// Handle redirect back from Google (token in URL hash)
-function handleOAuthRedirect() {
-  const hash = window.location.hash.substring(1);
-  if (hash) {
-    const params = new URLSearchParams(hash);
-    const token   = params.get('access_token');
-    const expires = params.get('expires_in'); // seconds
-    if (token) {
-      accessToken = token;
-      const expiry = Date.now() + (parseInt(expires) - 60) * 1000;
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(TOKEN_EXP_KEY, expiry);
-      history.replaceState(null, '', window.location.pathname);
-      onSignedIn();
-      return;
-    }
-  }
-  // Try restoring saved token
-  try {
-    const savedToken  = localStorage.getItem(TOKEN_KEY);
-    const savedExpiry = parseInt(localStorage.getItem(TOKEN_EXP_KEY) || '0');
-    if (savedToken && Date.now() < savedExpiry) {
-      accessToken = savedToken;
-      onSignedIn();
-    }
-    // If expired, user will see Sign in button — no silent redirect
-  } catch(_) {}
+// ── OAuth ──
+function signIn() {
+  const p = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT,
+    response_type: 'token',
+    scope: SCOPES,
+    prompt: 'consent'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + p;
+}
+
+function signOut() {
+  token = null;
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(EXPIRY_KEY);
+  document.getElementById('authBanner').classList.remove('hidden');
+  document.getElementById('authConnected').classList.add('hidden');
+  document.getElementById('cameraBtn').disabled = true;
+  document.getElementById('fileBtn').disabled   = true;
+  refreshBtn();
 }
 
 function onSignedIn() {
@@ -355,21 +306,36 @@ function onSignedIn() {
   refreshBtn();
 }
 
-function signOut() {
-  accessToken = null;
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(TOKEN_EXP_KEY);
-  document.getElementById('authBanner').classList.remove('hidden');
-  document.getElementById('authConnected').classList.add('hidden');
-  document.getElementById('cameraBtn').disabled = true;
-  document.getElementById('fileBtn').disabled   = true;
-  refreshBtn();
-}
+// Handle OAuth redirect — token in hash
+(function initAuth() {
+  if (window.location.hash) {
+    const p = new URLSearchParams(window.location.hash.slice(1));
+    const t = p.get('access_token');
+    const e = parseInt(p.get('expires_in') || '3600');
+    if (t) {
+      token = t;
+      localStorage.setItem(TOKEN_KEY, t);
+      localStorage.setItem(EXPIRY_KEY, Date.now() + (e - 120) * 1000);
+      history.replaceState(null, '', window.location.pathname);
+      onSignedIn();
+      return;
+    }
+  }
+  // Restore saved token
+  const t = localStorage.getItem(TOKEN_KEY);
+  const e = parseInt(localStorage.getItem(EXPIRY_KEY) || '0');
+  if (t && Date.now() < e) {
+    token = t;
+    onSignedIn();
+  }
+  // Restore saved folder
+  try {
+    const f = JSON.parse(localStorage.getItem(FOLDER_KEY));
+    if (f && f.id && f.name) setFolder(f, false);
+  } catch(_) {}
+})();
 
-// Run on load
-handleOAuthRedirect();
-
-// ── File inputs ──
+// ── File ──
 document.getElementById('cameraInput').addEventListener('change', e => onFile(e.target.files[0]));
 document.getElementById('fileInput').addEventListener('change',   e => onFile(e.target.files[0]));
 function openCamera()     { document.getElementById('cameraInput').click(); }
@@ -381,20 +347,13 @@ function onFile(f) {
   document.getElementById('previewName').textContent = f.name;
   const body = document.getElementById('previewBody');
   if (f.type.startsWith('image/')) {
-    body.innerHTML = `<img class="preview-img" src="${URL.createObjectURL(f)}" alt="preview">`;
+    body.innerHTML = '<img class="preview-img" src="' + URL.createObjectURL(f) + '" alt="">';
   } else {
-    const kb = (f.size/1024).toFixed(0);
-    body.innerHTML = `<div class="preview-pdf">
-      <svg class="preview-pdf-icon" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      <div class="preview-pdf-name">${esc(f.name)}</div>
-      <div class="preview-pdf-size">${kb} KB · PDF</div>
-    </div>`;
+    body.innerHTML = '<div class="preview-pdf"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="preview-pdf-name">' + esc(f.name) + '</div><div class="preview-pdf-size">' + (f.size/1024).toFixed(0) + ' KB · PDF</div></div>';
   }
   document.getElementById('previewWrap').style.display = 'block';
-  refreshBtn(); clearStatus();
+  clearStatus();
+  refreshBtn();
 }
 
 function clearFile() {
@@ -402,207 +361,178 @@ function clearFile() {
   document.getElementById('previewWrap').style.display = 'none';
   document.getElementById('cameraInput').value = '';
   document.getElementById('fileInput').value   = '';
-  refreshBtn(); clearStatus();
+  clearStatus();
+  refreshBtn();
 }
 
-function setFolder(f, save=true) {
+function setFolder(f, save) {
   folder = f;
   const el = document.getElementById('folderBarName');
-  el.textContent = f.name; el.classList.remove('empty');
-  if (save) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
+  el.textContent = f.name;
+  el.classList.remove('empty');
+  if (save !== false) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
   refreshBtn();
 }
 
 function refreshBtn() {
-  document.getElementById('sendBtn').disabled = !(file && folder && accessToken);
+  document.getElementById('sendBtn').disabled = !(file && folder && token);
 }
 
+// ── Status ──
 function showStatus(type, html) {
   const b = document.getElementById('statusBox');
-  b.className = 'status-box '+type; b.style.display = 'flex';
-  document.getElementById('statusSpinner').style.display = type==='loading'?'flex':'none';
+  b.className = 'status-box ' + type;
+  b.style.display = 'flex';
+  document.getElementById('statusSpinner').style.display = type === 'loading' ? 'flex' : 'none';
   document.getElementById('statusMsg').innerHTML = html;
 }
-function clearStatus() { document.getElementById('statusBox').style.display='none'; }
+function clearStatus() { document.getElementById('statusBox').style.display = 'none'; }
 
-function overlayClick(e, id) { if(e.target===document.getElementById(id)) closeOverlay(id); }
-function closeOverlay(id)     { document.getElementById(id).classList.add('hidden'); }
-
-// ── Folder browser ──
-function openFolderPicker() {
-  // Reset to root
-  breadcrumbs = [{id:'root', name:'My Drive'}];
-  currentFolderId   = 'root';
-  currentFolderName = 'My Drive';
+// ── Folder picker ──
+function openPicker() {
+  stack = [{id:'root', name:'My Drive'}];
   document.getElementById('pickerOverlay').classList.remove('hidden');
-  loadFolderContents('root', 'My Drive');
+  hideNFForm();
+  loadFolder();
 }
-
-
-
-async function loadFolderContents(folderId, folderName) {
-  const list = document.getElementById('pickerList');
-  list.innerHTML = `<div class="sheet-loading"><div class="spinner"></div> Loading… ${accessToken ? '(token OK)' : '(NO TOKEN)'}</div>`;
-  renderBreadcrumb();
-
-  document.getElementById('selectHereBtn').textContent = `📁 Save here — ${folderName}`;
-
-  try {
-    const q = encodeURIComponent(`'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
-    
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    
-    const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&orderBy=name&pageSize=100`,
-      { headers: { Authorization: 'Bearer ' + accessToken }, signal: controller.signal }
-    );
-    clearTimeout(timeout);
-    const data = await res.json();
-
-    if (!res.ok) {
-      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error ${res.status}: ${data.error?.message || JSON.stringify(data)}</div>`;
-      return;
-    }
-
-    const folders = data.files || [];
-
-    if (folders.length === 0) {
-      list.innerHTML = '<div class="sheet-empty">No subfolders here.<br>You can save in this folder.</div>';
-      return;
-    }
-
-    list.innerHTML = folders.map(f => `
-      <div class="folder-item" onclick="navigateInto('${f.id}','${escAttr(f.name)}')">
-        <svg class="folder-item-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-        </svg>
-        <span class="folder-item-name">${esc(f.name)}</span>
-        <svg class="folder-item-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>`).join('');
-  } catch(e) {
-    if (e.name === 'AbortError') {
-      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Timeout — no response from Drive API after 10s</div>`;
-    } else {
-      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Exception: ${e.message}</div>`;
-    }
-    console.error(e);
-  }
+function closeOverlay() {
+  document.getElementById('pickerOverlay').classList.add('hidden');
 }
-
-function navigateInto(id, name) {
-  currentFolderId   = id;
-  currentFolderName = name;
-  breadcrumbs.push({id, name});
-  loadFolderContents(id, name);
-}
-
-function navigateTo(index) {
-  breadcrumbs = breadcrumbs.slice(0, index + 1);
-  const crumb = breadcrumbs[breadcrumbs.length - 1];
-  currentFolderId   = crumb.id;
-  currentFolderName = crumb.name;
-  loadFolderContents(crumb.id, crumb.name);
+function saveHere() {
+  setFolder({id: curId(), name: curName()});
+  closeOverlay();
 }
 
 function renderBreadcrumb() {
-  const bc = document.getElementById('breadcrumb');
-  bc.innerHTML = breadcrumbs.map((c, i) => {
-    const isLast = i === breadcrumbs.length - 1;
-    return `${i > 0 ? '<span class="breadcrumb-sep">›</span>' : ''}
-      <span class="breadcrumb-item ${isLast ? 'current' : ''}" ${!isLast ? `onclick="navigateTo(${i})"` : ''}>${esc(c.name)}</span>`;
+  document.getElementById('breadcrumb').innerHTML = stack.map(function(c, i) {
+    var isLast = i === stack.length - 1;
+    return (i > 0 ? '<span class="bc-sep">›</span>' : '') +
+      '<span class="bc-item"' + (!isLast ? ' onclick="navTo(' + i + ')"' : '') + '>' + esc(c.name) + '</span>';
   }).join('');
+  document.getElementById('saveHereBtn').textContent = '📁 Save here — ' + esc(curName());
 }
 
-function selectCurrentFolder() {
-  setFolder({id: currentFolderId, name: currentFolderName});
-  closeOverlay('pickerOverlay');
+function navTo(i) {
+  stack = stack.slice(0, i + 1);
+  hideNFForm();
+  loadFolder();
 }
 
-// ── Upload ──
-async function doUpload() {
-  if (!file || !folder || !accessToken) return;
-  document.getElementById('sendBtn').disabled = true;
-  showStatus('loading', 'Uploading to Drive…');
+function navInto(id, name) {
+  stack.push({id: id, name: name});
+  hideNFForm();
+  loadFolder();
+}
+
+async function loadFolder() {
+  renderBreadcrumb();
+  const list = document.getElementById('folderList');
+  list.innerHTML = '<div class="sheet-msg"><div class="spinner" style="display:inline-block;margin-right:8px"></div>Loading…</div>';
 
   try {
-    const metadata = { name: file.name, parents: [folder.id] };
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
-    form.append('file', file);
+    var folderId = curId();
+    var query = folderId === 'root'
+      ? "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
+      : "mimeType='application/vnd.google-apps.folder' and '" + folderId + "' in parents and trashed=false";
 
-    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + accessToken },
-      body: form
+    var url = 'https://www.googleapis.com/drive/v3/files?pageSize=100&orderBy=name&fields=files(id,name)&q=' + encodeURIComponent(query);
+
+    var res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || 'Upload failed');
+      var err = await res.json();
+      list.innerHTML = '<div class="sheet-err">Error ' + res.status + ': ' + esc(err.error && err.error.message ? err.error.message : JSON.stringify(err)) + '</div>';
+      return;
     }
 
-    const data = await res.json();
-    const link = data.webViewLink || `https://drive.google.com/file/d/${data.id}/view`;
-    showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong> &nbsp;·&nbsp; <a href="${link}" target="_blank">Open in Drive →</a>`);
-    clearFile();
+    var data = await res.json();
+    var folders = data.files || [];
+
+    if (folders.length === 0) {
+      list.innerHTML = '<div class="sheet-msg">No subfolders — you can save here.</div>';
+      return;
+    }
+
+    list.innerHTML = folders.map(function(f) {
+      return '<div class="folder-item" onclick="navInto(\'' + escQ(f.id) + '\',\'' + escQ(f.name) + '\')">' +
+        '<svg class="fi-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>' +
+        '<span class="fi-name">' + esc(f.name) + '</span>' +
+        '<svg class="fi-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</div>';
+    }).join('');
+
   } catch(e) {
-    console.error(e);
-    showStatus('error', 'Upload failed: ' + e.message);
+    list.innerHTML = '<div class="sheet-err">Error: ' + esc(e.message) + '</div>';
   }
-  refreshBtn();
 }
 
 // ── New folder ──
-function showNewFolderForm() {
-  document.getElementById('newFolderForm').style.display = 'block';
-  document.getElementById('newFolderName').value = '';
-  document.getElementById('newFolderName').focus();
+function showNFForm() {
+  document.getElementById('nfTrigger').style.display = 'none';
+  document.getElementById('nfForm').style.display = 'block';
+  document.getElementById('nfInput').value = '';
+  document.getElementById('nfInput').focus();
+}
+function hideNFForm() {
+  document.getElementById('nfTrigger').style.display = 'block';
+  document.getElementById('nfForm').style.display = 'none';
 }
 
-function cancelNewFolder() {
-  document.getElementById('newFolderForm').style.display = 'none';
-}
-
-async function createFolder() {
-  const name = document.getElementById('newFolderName').value.trim();
+async function doCreateFolder() {
+  var name = document.getElementById('nfInput').value.trim();
   if (!name) return;
-
-  const btn = document.querySelector('#newFolderForm button');
+  var btn = document.getElementById('nfCreateBtn');
   btn.textContent = '…'; btn.disabled = true;
-
   try {
-    const res = await fetch('https://www.googleapis.com/drive/v3/files', {
+    var res = await fetch('https://www.googleapis.com/drive/v3/files', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + accessToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        mimeType: 'application/vnd.google-apps.folder',
-        parents: [currentFolderId]
-      })
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder', parents: [curId()] })
     });
     if (!res.ok) throw new Error('Failed');
-    const data = await res.json();
-    cancelNewFolder();
-    // Navigate into the new folder
-    navigateInto(data.id, data.name);
+    var data = await res.json();
+    hideNFForm();
+    navInto(data.id, data.name);
   } catch(e) {
     btn.textContent = 'Create'; btn.disabled = false;
     alert('Could not create folder: ' + e.message);
   }
 }
 
+// ── Upload ──
+async function doUpload() {
+  if (!file || !folder || !token) return;
+  document.getElementById('sendBtn').disabled = true;
+  showStatus('loading', 'Uploading to Drive…');
+  try {
+    var meta = JSON.stringify({ name: file.name, parents: [folder.id] });
+    var form = new FormData();
+    form.append('metadata', new Blob([meta], {type:'application/json'}));
+    form.append('file', file);
+    var res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: form
+    });
+    if (!res.ok) {
+      var err = await res.json();
+      throw new Error(err.error && err.error.message ? err.error.message : 'Upload failed');
+    }
+    var data = await res.json();
+    var link = data.webViewLink || ('https://drive.google.com/file/d/' + data.id + '/view');
+    showStatus('success', '✓ Saved to <strong>' + esc(folder.name) + '</strong> &nbsp;·&nbsp; <a href="' + link + '" target="_blank">Open in Drive →</a>');
+    clearFile();
+  } catch(e) {
+    showStatus('error', 'Upload failed: ' + esc(e.message));
+  }
+  refreshBtn();
+}
 
-function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-// Register service worker for PWA
+// ── Service Worker ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(e => console.log('SW:', e));
+  navigator.serviceWorker.register('sw.js');
 }
 </script>
 </body>
