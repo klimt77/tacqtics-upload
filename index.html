@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tacqtics · Upload</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -15,7 +16,6 @@
   html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--white); }
   .app { width:100%; max-width:430px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; }
 
-  /* Header */
   .header { display:flex; align-items:center; justify-content:space-between; padding:22px 20px 18px; border-bottom:1px solid var(--border); flex-shrink:0; }
   .logo { display:flex; flex-direction:column; gap:3px; }
   .logo-name { font-size:15px; font-weight:700; letter-spacing:0.14em; }
@@ -23,20 +23,27 @@
   .icon-btn  { background:none; border:none; cursor:pointer; color:var(--muted); padding:8px; border-radius:10px; display:flex; align-items:center; transition:color .15s,background .15s; }
   .icon-btn:hover { color:var(--white); background:var(--surface); }
 
-  /* Main */
-  .main { flex:1; display:flex; flex-direction:column; padding:28px 20px; gap:24px; overflow-y:auto; }
+  /* Auth banner */
+  .auth-banner { margin:16px 20px 0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center; }
+  .auth-banner-title { font-size:14px; font-weight:600; }
+  .auth-banner-sub { font-size:12px; color:var(--muted); line-height:1.5; }
+  .google-btn { display:flex; align-items:center; gap:10px; background:#fff; color:#1f1f1f; border:none; border-radius:10px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; transition:box-shadow .15s; }
+  .google-btn:hover { box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+  .auth-user { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--green); }
+  .auth-signout { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline; }
+
+  .main { flex:1; display:flex; flex-direction:column; padding:24px 20px; gap:22px; overflow-y:auto; }
   .section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
 
-  /* Add doc buttons */
   .add-doc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .add-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:26px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:border-color .15s,background .15s; color:var(--white); text-align:center; }
   .add-btn:hover  { border-color:var(--green); background:#182d38; }
   .add-btn:active { background:#1e3540; }
+  .add-btn:disabled { opacity:0.4; cursor:not-allowed; }
   .add-btn-icon  { width:52px; height:52px; background:var(--teal); border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--green); }
   .add-btn-title { font-size:14px; font-weight:700; line-height:1.2; }
   .add-btn-sub   { font-size:11px; color:var(--muted); line-height:1.4; }
 
-  /* Preview */
   .preview-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
   .preview-bar  { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
   .preview-bar-name { flex:1; min-width:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -48,9 +55,8 @@
   .preview-pdf-name { font-size:14px; font-weight:600; }
   .preview-pdf-size { font-size:12px; color:var(--muted); }
 
-  .spacer { flex:1; }
+  .spacer { flex:1; min-height:16px; }
 
-  /* Status */
   .status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; line-height:1.5; }
   .status-box.loading { background:#1a2e38; color:var(--muted); }
   .status-box.success { background:#0d2318; color:var(--green); border:1px solid var(--green-dim); }
@@ -59,7 +65,6 @@
   .spinner { width:16px; height:16px; flex-shrink:0; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* Upload-to */
   .upload-to-section { display:flex; flex-direction:column; gap:10px; }
   .folder-bar { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color .15s; }
   .folder-bar:hover { border-color:var(--green-dim); }
@@ -74,7 +79,6 @@
   .send-btn:hover { opacity:.9; }
   .send-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; opacity:1; }
 
-  /* Overlay / Sheet */
   .overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
   .overlay.hidden { display:none; }
   .sheet { background:var(--surface2); border-radius:22px 22px 0 0; padding:0 0 32px; width:100%; max-width:430px; max-height:80vh; display:flex; flex-direction:column; animation:slideUp .22s cubic-bezier(.32,0,.38,1); }
@@ -85,7 +89,6 @@
   .sheet-scroll { flex:1; overflow-y:auto; padding:0 20px; display:flex; flex-direction:column; gap:6px; }
   .sheet-footer { padding:14px 20px; flex-shrink:0; }
 
-  /* Folder items — grouped */
   .folder-group-label { font-size:10px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; padding:12px 0 6px; }
   .folder-item { display:flex; align-items:center; gap:10px; padding:13px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; color:var(--white); transition:border-color .15s; font-size:14px; }
   .folder-item:hover  { border-color:var(--green-dim); }
@@ -93,7 +96,6 @@
   .folder-item-icon  { color:var(--muted); flex-shrink:0; }
   .folder-item-name  { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .folder-item-check { color:var(--green); flex-shrink:0; }
-  .folder-item-sub   { font-size:11px; color:var(--muted); white-space:nowrap; flex-shrink:0; }
 
   .cancel-btn { width:100%; background:none; border:1.5px solid var(--border); border-radius:12px; padding:14px; color:var(--muted); font-size:14px; font-weight:500; cursor:pointer; transition:color .15s,border-color .15s; }
   .cancel-btn:hover { color:var(--white); border-color:var(--muted); }
@@ -116,12 +118,29 @@
     </button>
   </header>
 
+  <!-- Auth banner -->
+  <div class="auth-banner" id="authBanner">
+    <div class="auth-banner-title">Connect Google Drive</div>
+    <div class="auth-banner-sub">Sign in with your Google account to upload files to Drive.</div>
+    <button class="google-btn" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+      Sign in with Google
+    </button>
+  </div>
+
+  <div class="auth-banner hidden" id="authUser">
+    <div class="auth-user">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span id="authUserName">Connected</span>
+    </div>
+    <button class="auth-signout" onclick="signOut()">Sign out</button>
+  </div>
+
   <main class="main">
-    <!-- Add document -->
     <section>
       <div class="section-label">Add document</div>
       <div class="add-doc-row">
-        <button class="add-btn" onclick="openCamera()">
+        <button class="add-btn" id="cameraBtn" onclick="openCamera()" disabled>
           <div class="add-btn-icon">
             <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -131,7 +150,7 @@
           <div class="add-btn-title">Use camera</div>
           <div class="add-btn-sub">Take a photo</div>
         </button>
-        <button class="add-btn" onclick="openFilePicker()">
+        <button class="add-btn" id="fileBtn" onclick="openFilePicker()" disabled>
           <div class="add-btn-icon">
             <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -146,7 +165,6 @@
       </div>
     </section>
 
-    <!-- Preview -->
     <div class="preview-wrap" id="previewWrap" style="display:none">
       <div class="preview-bar">
         <span class="preview-bar-name" id="previewName"></span>
@@ -159,7 +177,6 @@
       <div id="previewBody"></div>
     </div>
 
-    <!-- Status -->
     <div class="status-box" id="statusBox" style="display:none">
       <div class="spinner" id="statusSpinner" style="display:none"></div>
       <span id="statusMsg"></span>
@@ -167,7 +184,6 @@
 
     <div class="spacer"></div>
 
-    <!-- Upload to -->
     <section class="upload-to-section">
       <div class="section-label">Upload to</div>
       <div class="folder-bar" onclick="openFolderPicker()">
@@ -192,55 +208,51 @@
   </main>
 </div>
 
-<!-- Folder picker sheet -->
+<!-- Folder picker -->
 <div class="overlay hidden" id="pickerOverlay" onclick="overlayClick(event,'pickerOverlay')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Choose folder</div>
-    <div class="sheet-sub">Select where to save your file in Google Drive.</div>
+    <div class="sheet-sub">Select where to save your file.</div>
     <div class="sheet-scroll" id="pickerList"></div>
     <div class="sheet-footer"><button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button></div>
   </div>
 </div>
 
-<!-- Settings sheet -->
+<!-- Settings -->
 <div class="overlay hidden" id="settingsOverlay" onclick="overlayClick(event,'settingsOverlay')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Settings</div>
-    <div class="sheet-sub">The selected folder will be remembered as your default.</div>
+    <div class="sheet-sub">Default folder — remembered across sessions.</div>
     <div class="sheet-scroll" id="settingsList"></div>
     <div class="sheet-footer"><button class="cancel-btn" onclick="closeOverlay('settingsOverlay')">Done</button></div>
   </div>
 </div>
 
-<!-- Camera: capture=environment forces rear camera on mobile -->
 <input type="file" id="cameraInput" accept="image/*" capture="environment">
-<!-- File: explicit list -->
-<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf">
+<input type="file" id="fileInput"   accept="image/jpeg,image/png,image/webp,image/heic,application/pdf">
 
 <script>
-// ── Drive folders — baked in from live fetch ──
+const CLIENT_ID = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
+const SCOPES    = 'https://www.googleapis.com/auth/drive.file';
+const FOLDER_KEY = 'tq_last_folder';
+
 const DRIVE_FOLDERS = [
-  // Tacqtics (most relevant first)
-  {id:"1-85qoBjE1crUvBghTFq8QtMjXNZ5Dhzr", name:"expenses",               group:"Tacqtics"},
-  {id:"1lsBux3bjOqDbeyT3rbgdWnWgeeH-WysS", name:"Note de frais juillet",   group:"Tacqtics"},
-  {id:"1AJVZe5XY8j2jNBTxXkAG_cigVgTbg_QW", name:"toutes les factures (avr 2026+)", group:"Tacqtics"},
-  {id:"1qnSheIq38Zfflb6HUGT9bxEyx0TSEkVX", name:"Financials",              group:"Tacqtics"},
-  {id:"1_7RECSzJ-riqy__gVxSuDb5aBAPAdRg0", name:"Administratif",           group:"Tacqtics"},
-  {id:"1h_lrp3iA4cABac8jjFQ0LypF8Iwcb_Zp", name:"Business License 2026",  group:"Tacqtics"},
-  {id:"1BLKxy-jM9DC6NvbVd2OnkhqqvrWAjBEr", name:"Tacqtics (root)",         group:"Tacqtics"},
-  {id:"1l_mZy9MpocGxyO_XHFEM_XFS1-gEhVNy", name:"Clients",                 group:"Tacqtics"},
-  {id:"1PGbJ4TDX1ci-eQUAXep-Rssjp3euxMWj", name:"Contract & Business Model",group:"Tacqtics"},
-  {id:"1OiZwnATRCOPU5LEVdv2bxEYBsItJddfR", name:"Presentations",           group:"Tacqtics"},
-  // Other
-  {id:"1a6dM6kBYuc6mV7i0pxvhn55yoYSjPc9B", name:"Fermeture compte SG",    group:"Other"},
-  {id:"1M-ceZ5XXurqdKz55tUB3e8roFGYbnVDR", name:"Passeports",              group:"Other"},
-  {id:"16jIbk15iRCUPvMe_Ff5zUvPdqQeLahva", name:"CVs à partager",          group:"Other"},
-  {id:"1WUXiFy4ndh_40R2rxH-_S1xFobvYqCaO", name:"Testaments (parent)",     group:"Other"},
+  {id:"1-85qoBjE1crUvBghTFq8QtMjXNZ5Dhzr", name:"expenses",                     group:"Tacqtics"},
+  {id:"1lsBux3bjOqDbeyT3rbgdWnWgeeH-WysS", name:"Note de frais juillet",         group:"Tacqtics"},
+  {id:"1AJVZe5XY8j2jNBTxXkAG_cigVgTbg_QW", name:"toutes les factures (avr 2026+)",group:"Tacqtics"},
+  {id:"1qnSheIq38Zfflb6HUGT9bxEyx0TSEkVX", name:"Financials",                    group:"Tacqtics"},
+  {id:"1_7RECSzJ-riqy__gVxSuDb5aBAPAdRg0", name:"Administratif",                 group:"Tacqtics"},
+  {id:"1h_lrp3iA4cABac8jjFQ0LypF8Iwcb_Zp", name:"Business License 2026",        group:"Tacqtics"},
+  {id:"1BLKxy-jM9DC6NvbVd2OnkhqqvrWAjBEr", name:"Tacqtics (root)",               group:"Tacqtics"},
+  {id:"1l_mZy9MpocGxyO_XHFEM_XFS1-gEhVNy", name:"Clients",                      group:"Tacqtics"},
+  {id:"1a6dM6kBYuc6mV7i0pxvhn55yoYSjPc9B", name:"Fermeture compte SG",          group:"Other"},
+  {id:"1M-ceZ5XXurqdKz55tUB3e8roFGYbnVDR", name:"Passeports",                    group:"Other"},
+  {id:"16jIbk15iRCUPvMe_Ff5zUvPdqQeLahva", name:"CVs à partager",                group:"Other"},
 ];
 
-const FOLDER_KEY = 'tq_last_folder';
+let accessToken = null;
 let file   = null;
 let folder = null;
 
@@ -250,17 +262,44 @@ try {
   if (s) setFolder(JSON.parse(s), false);
 } catch(_) {}
 
-// ── Inputs ──
+// ── Google Identity Services ──
+function signIn() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.error) { console.error(resp); return; }
+      accessToken = resp.access_token;
+      onSignedIn();
+    }
+  });
+  client.requestAccessToken();
+}
+
+function onSignedIn() {
+  document.getElementById('authBanner').classList.add('hidden');
+  document.getElementById('authUser').classList.remove('hidden');
+  document.getElementById('authUserName').textContent = 'Connected to Google Drive';
+  document.getElementById('cameraBtn').disabled = false;
+  document.getElementById('fileBtn').disabled   = false;
+  refreshBtn();
+}
+
+function signOut() {
+  accessToken = null;
+  document.getElementById('authBanner').classList.remove('hidden');
+  document.getElementById('authUser').classList.add('hidden');
+  document.getElementById('cameraBtn').disabled = true;
+  document.getElementById('fileBtn').disabled   = true;
+  refreshBtn();
+}
+
+// ── File inputs ──
 document.getElementById('cameraInput').addEventListener('change', e => onFile(e.target.files[0]));
 document.getElementById('fileInput').addEventListener('change',   e => onFile(e.target.files[0]));
-
-function openCamera()     {
-  // On mobile this opens native camera; on desktop shows file picker
-  document.getElementById('cameraInput').click();
-}
+function openCamera()     { document.getElementById('cameraInput').click(); }
 function openFilePicker() { document.getElementById('fileInput').click(); }
 
-// ── File ──
 function onFile(f) {
   if (!f) return;
   file = f;
@@ -274,7 +313,6 @@ function onFile(f) {
       <svg class="preview-pdf-icon" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
-        <line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
       </svg>
       <div class="preview-pdf-name">${esc(f.name)}</div>
       <div class="preview-pdf-size">${kb} KB · PDF</div>
@@ -292,7 +330,6 @@ function clearFile() {
   refreshBtn(); clearStatus();
 }
 
-// ── Folder ──
 function setFolder(f, save=true) {
   folder = f;
   const el = document.getElementById('folderBarName');
@@ -300,11 +337,11 @@ function setFolder(f, save=true) {
   if (save) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
   refreshBtn();
 }
+
 function refreshBtn() {
-  document.getElementById('sendBtn').disabled = !(file && folder);
+  document.getElementById('sendBtn').disabled = !(file && folder && accessToken);
 }
 
-// ── Status ──
 function showStatus(type, html) {
   const b = document.getElementById('statusBox');
   b.className = 'status-box '+type; b.style.display = 'flex';
@@ -313,7 +350,6 @@ function showStatus(type, html) {
 }
 function clearStatus() { document.getElementById('statusBox').style.display='none'; }
 
-// ── Sheets ──
 function overlayClick(e, id) { if(e.target===document.getElementById(id)) closeOverlay(id); }
 function closeOverlay(id)     { document.getElementById(id).classList.add('hidden'); }
 
@@ -328,7 +364,6 @@ function openSettings() {
 
 function renderList(listId, isSettings) {
   const list = document.getElementById(listId);
-  // Group by Tacqtics / Other
   const groups = {};
   DRIVE_FOLDERS.forEach(f => { (groups[f.group]||(groups[f.group]=[])).push(f); });
   let html = '';
@@ -355,52 +390,44 @@ function pickFolder(id, name, isSettings) {
   closeOverlay(isSettings ? 'settingsOverlay' : 'pickerOverlay');
 }
 
-// ── Upload via MCP ──
+// ── Upload directly to Google Drive API ──
 async function doUpload() {
-  if (!file || !folder) return;
+  if (!file || !folder || !accessToken) return;
   document.getElementById('sendBtn').disabled = true;
   showStatus('loading', 'Uploading to Drive…');
+
   try {
-    const b64  = await readBase64(file);
-    const mime = file.type || 'application/octet-stream';
-    const res  = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-6', max_tokens:1000,
-        system:`You upload files to Google Drive via MCP. After uploading return ONLY JSON: {"fileId":"...","webViewLink":"..."}. No markdown.`,
-        messages:[{role:'user', content:[
-          { type: mime.startsWith('image/') ? 'image' : 'document',
-            source:{type:'base64', media_type:mime, data:b64} },
-          { type:'text', text:`Upload this file to Google Drive folder ID "${folder.id}" with filename "${file.name}". Return JSON with fileId and webViewLink.` }
-        ]}],
-        mcp_servers:[{type:'url', url:'https://drivemcp.googleapis.com/mcp/v1', name:'gdrive'}]
-      })
+    const metadata = {
+      name: file.name,
+      parents: [folder.id]
+    };
+
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
+    form.append('file', file);
+
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + accessToken },
+      body: form
     });
-    const data = await res.json();
-    const txt = data.content.map(b => b.type==='text'?b.text:(b.content?.[0]?.text||'')).join(' ');
-    const lm  = txt.match(/https:\/\/drive\.google\.com[^\s"')>]+/);
-    if (lm) {
-      showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong> &nbsp;·&nbsp; <a href="${lm[0]}" target="_blank">Open in Drive →</a>`);
-    } else if (/success|uploaded|created/i.test(txt)) {
-      showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong>`);
-    } else {
-      showStatus('error', 'Something went wrong. Please try again.');
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Upload failed');
     }
+
+    const data = await res.json();
+    const link = data.webViewLink || `https://drive.google.com/file/d/${data.id}/view`;
+    showStatus('success', `✓ Saved to <strong>${esc(folder.name)}</strong> &nbsp;·&nbsp; <a href="${link}" target="_blank">Open in Drive →</a>`);
+    clearFile();
   } catch(e) {
+    console.error(e);
     showStatus('error', 'Upload failed: ' + e.message);
   }
   refreshBtn();
 }
 
-function readBase64(f) {
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result.split(',')[1]);
-    r.onerror=()=>rej(new Error('Read failed'));
-    r.readAsDataURL(f);
-  });
-}
 function esc(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 </script>
