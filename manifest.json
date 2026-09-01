@@ -1,6 +1,6 @@
 {
-  "name": "Tacqtics Upload",
-  "short_name": "Tacqtics",
+  "name": "OTACQ",
+  "short_name": "OTACQ",
   "description": "Upload documents to Google Drive",
   "start_url": "/tacqtics-upload/",
   "display": "standalone",

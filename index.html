@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tacqtics · Upload</title>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>OTACQ</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0F1A1F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tacqtics">
+<meta name="apple-mobile-web-app-title" content="OTACQ">
 <link rel="apple-touch-icon" href="logo.png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -279,18 +278,61 @@ try {
   if (s) setFolder(JSON.parse(s), false);
 } catch(_) {}
 
-// ── OAuth ──
+// ── OAuth — redirect flow (works in PWA standalone) ──
+const REDIRECT_URI = 'https://klimt77.github.io/tacqtics-upload/';
+const TOKEN_KEY    = 'tq_token';
+const TOKEN_EXP_KEY = 'tq_token_exp';
+
 function signIn() {
-  const client = google.accounts.oauth2.initTokenClient({
+  const params = new URLSearchParams({
     client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    response_type: 'token',
     scope: SCOPES,
-    callback: (resp) => {
-      if (resp.error) { console.error(resp); return; }
-      accessToken = resp.access_token;
-      onSignedIn();
-    }
+    include_granted_scopes: 'true',
+    state: 'signin'
   });
-  client.requestAccessToken();
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+}
+
+// Handle redirect back from Google (token in URL hash)
+function handleOAuthRedirect() {
+  const hash = window.location.hash.substring(1);
+  if (hash) {
+    const params = new URLSearchParams(hash);
+    const token   = params.get('access_token');
+    const expires = params.get('expires_in'); // seconds
+    if (token) {
+      accessToken = token;
+      const expiry = Date.now() + (parseInt(expires) - 60) * 1000;
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(TOKEN_EXP_KEY, expiry);
+      history.replaceState(null, '', window.location.pathname);
+      onSignedIn();
+      return;
+    }
+  }
+  // Try restoring saved token
+  try {
+    const savedToken  = localStorage.getItem(TOKEN_KEY);
+    const savedExpiry = parseInt(localStorage.getItem(TOKEN_EXP_KEY) || '0');
+    if (savedToken && Date.now() < savedExpiry) {
+      accessToken = savedToken;
+      onSignedIn();
+    } else if (savedToken) {
+      // Token expired — silent re-auth with prompt=none
+      const params = new URLSearchParams({
+        client_id: CLIENT_ID,
+        redirect_uri: REDIRECT_URI,
+        response_type: 'token',
+        scope: SCOPES,
+        include_granted_scopes: 'true',
+        prompt: 'none',
+        state: 'silent'
+      });
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+    }
+  } catch(_) {}
 }
 
 function onSignedIn() {
@@ -303,12 +345,17 @@ function onSignedIn() {
 
 function signOut() {
   accessToken = null;
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_EXP_KEY);
   document.getElementById('authBanner').classList.remove('hidden');
   document.getElementById('authConnected').classList.add('hidden');
   document.getElementById('cameraBtn').disabled = true;
   document.getElementById('fileBtn').disabled   = true;
   refreshBtn();
 }
+
+// Run on load
+handleOAuthRedirect();
 
 // ── File inputs ──
 document.getElementById('cameraInput').addEventListener('change', e => onFile(e.target.files[0]));
