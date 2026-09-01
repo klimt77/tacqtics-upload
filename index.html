@@ -319,19 +319,8 @@ function handleOAuthRedirect() {
     if (savedToken && Date.now() < savedExpiry) {
       accessToken = savedToken;
       onSignedIn();
-    } else if (savedToken) {
-      // Token expired — silent re-auth with prompt=none
-      const params = new URLSearchParams({
-        client_id: CLIENT_ID,
-        redirect_uri: REDIRECT_URI,
-        response_type: 'token',
-        scope: SCOPES,
-        include_granted_scopes: 'true',
-        prompt: 'none',
-        state: 'silent'
-      });
-      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
     }
+    // If expired, user will see Sign in button — no silent redirect
   } catch(_) {}
 }
 

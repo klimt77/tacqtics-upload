@@ -1,4 +1,4 @@
-const CACHE = 'otacq-v2';
+const CACHE = 'otacq-v3';
 const ASSETS = [
   '/tacqtics-upload/',
   '/tacqtics-upload/index.html',
