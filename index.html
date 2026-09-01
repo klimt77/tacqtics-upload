@@ -114,6 +114,16 @@ html,body { height:100%; font-family:var(--font); background:var(--bg); color:va
 
 input[type="file"] { display:none; }
 .hidden { display:none !important; }
+
+/* Toast */
+.toast-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; pointer-events:none; }
+.toast-overlay.show { opacity:1; pointer-events:auto; }
+.toast-box { background:var(--surface2); border:2px solid var(--green); border-radius:20px; padding:28px 24px; text-align:center; width:85%; max-width:320px; }
+.toast-icon { font-size:44px; margin-bottom:12px; }
+.toast-title { font-size:17px; font-weight:700; color:var(--green); margin-bottom:6px; }
+.toast-folder { font-size:13px; color:var(--muted); margin-bottom:20px; }
+.toast-link { display:block; background:var(--green); color:#071a0e; border:none; border-radius:10px; padding:13px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; margin-bottom:10px; }
+.toast-close { background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); font-size:14px; cursor:pointer; width:100%; }
 </style>
 </head>
 <body>
@@ -244,6 +254,17 @@ input[type="file"] { display:none; }
   </div>
 </div>
 
+<!-- Success toast -->
+<div class="toast-overlay" id="toastOverlay">
+  <div class="toast-box">
+    <div class="toast-icon">✅</div>
+    <div class="toast-title">Upload réussi !</div>
+    <div class="toast-folder" id="toastFolder"></div>
+    <a class="toast-link" id="toastLink" target="_blank">Ouvrir dans Drive →</a>
+    <button class="toast-close" onclick="closeToast()">Fermer</button>
+  </div>
+</div>
+
 <input type="file" id="cameraInput" accept="image/*" capture="environment">
 <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf">
 
@@ -268,7 +289,14 @@ function curId()   { return stack[stack.length-1].id; }
 function curName() { return stack[stack.length-1].name; }
 
 // ── Helpers ──
-function esc(s) {
+function showToast(folderName, link) {
+  document.getElementById('toastFolder').textContent = 'Sauvegardé dans : ' + folderName;
+  document.getElementById('toastLink').href = link;
+  document.getElementById('toastOverlay').classList.add('show');
+}
+function closeToast() {
+  document.getElementById('toastOverlay').classList.remove('show');
+}
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function escQ(s) {
@@ -537,7 +565,7 @@ async function doUpload() {
     }
     var data = await res.json();
     var link = data.webViewLink || ('https://drive.google.com/file/d/' + data.id + '/view');
-    showStatus('success', '✓ Saved to <strong>' + esc(folder.name) + '</strong> &nbsp;·&nbsp; <a href="' + link + '" target="_blank">Open in Drive →</a>');
+    showToast(folder.name, link);
     clearFile();
   } catch(e) {
     showStatus('error', 'Upload failed: ' + esc(e.message));
