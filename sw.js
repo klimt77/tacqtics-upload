@@ -1,4 +1,4 @@
-const CACHE = 'otacq-v3';
+const CACHE = 'otacq-v4';
 const ASSETS = [
   '/tacqtics-upload/',
   '/tacqtics-upload/index.html',
@@ -20,10 +20,12 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network first for API calls, cache first for assets
+  // Pass through Google API calls directly to network
   if (e.request.url.includes('googleapis.com') || e.request.url.includes('accounts.google.com')) {
-    return; // Let network handle Google API calls
+    e.respondWith(fetch(e.request));
+    return;
   }
+  // Cache first for local assets
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );
