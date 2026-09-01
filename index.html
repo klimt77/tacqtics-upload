@@ -280,7 +280,7 @@
 
 <script>
 const CLIENT_ID  = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
-const SCOPES     = 'https://www.googleapis.com/auth/drive';
+const SCOPES     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
 const FOLDER_KEY = 'tq_last_folder';
 
 let accessToken = null;
@@ -449,14 +449,19 @@ async function loadFolderContents(folderId, folderName) {
 
   try {
     const q = encodeURIComponent(`'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
+    
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    
     const res = await fetch(
       `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&orderBy=name&pageSize=100`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
+      { headers: { Authorization: 'Bearer ' + accessToken }, signal: controller.signal }
     );
+    clearTimeout(timeout);
     const data = await res.json();
 
     if (!res.ok) {
-      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error ${res.status}: ${JSON.stringify(data.error?.message || data)}</div>`;
+      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error ${res.status}: ${data.error?.message || JSON.stringify(data)}</div>`;
       return;
     }
 
@@ -478,7 +483,11 @@ async function loadFolderContents(folderId, folderName) {
         </svg>
       </div>`).join('');
   } catch(e) {
-    list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Exception: ${e.message}</div>`;
+    if (e.name === 'AbortError') {
+      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Timeout — no response from Drive API after 10s</div>`;
+    } else {
+      list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Exception: ${e.message}</div>`;
+    }
     console.error(e);
   }
 }
