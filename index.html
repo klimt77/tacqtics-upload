@@ -244,9 +244,22 @@
     <div class="sheet-title">Choose folder</div>
     <div class="breadcrumb" id="breadcrumb"></div>
     <div class="sheet-scroll" id="pickerList"></div>
+
+    <!-- New folder input (hidden by default) -->
+    <div id="newFolderForm" style="display:none; padding:0 20px 8px; flex-shrink:0;">
+      <div style="display:flex; gap:8px;">
+        <input id="newFolderName" type="text" placeholder="Folder name…"
+          style="flex:1; background:var(--surface); border:1.5px solid var(--green-dim); border-radius:10px; padding:12px 14px; color:var(--white); font-size:14px; outline:none;"
+          onkeydown="if(event.key==='Enter') createFolder()">
+        <button onclick="createFolder()" style="background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer;">Create</button>
+        <button onclick="cancelNewFolder()" style="background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); cursor:pointer;">✕</button>
+      </div>
+    </div>
+
     <div class="sheet-footer">
       <button class="select-here-btn" id="selectHereBtn" onclick="selectCurrentFolder()">📁 Save here</button>
-      <button class="cancel-btn" onclick="closeOverlay('pickerOverlay')">Cancel</button>
+      <button onclick="showNewFolderForm()" style="background:none; border:1.5px solid var(--border); border-radius:12px; padding:13px 14px; color:var(--muted); font-size:13px; cursor:pointer; white-space:nowrap;">+ New folder</button>
+      <button class="cancel-btn" style="flex:0.6" onclick="closeOverlay('pickerOverlay')">Cancel</button>
     </div>
   </div>
 </div>
@@ -518,7 +531,49 @@ async function doUpload() {
   refreshBtn();
 }
 
-function esc(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// ── New folder ──
+function showNewFolderForm() {
+  document.getElementById('newFolderForm').style.display = 'block';
+  document.getElementById('newFolderName').value = '';
+  document.getElementById('newFolderName').focus();
+}
+
+function cancelNewFolder() {
+  document.getElementById('newFolderForm').style.display = 'none';
+}
+
+async function createFolder() {
+  const name = document.getElementById('newFolderName').value.trim();
+  if (!name) return;
+
+  const btn = document.querySelector('#newFolderForm button');
+  btn.textContent = '…'; btn.disabled = true;
+
+  try {
+    const res = await fetch('https://www.googleapis.com/drive/v3/files', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: [currentFolderId]
+      })
+    });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    cancelNewFolder();
+    // Navigate into the new folder
+    navigateInto(data.id, data.name);
+  } catch(e) {
+    btn.textContent = 'Create'; btn.disabled = false;
+    alert('Could not create folder: ' + e.message);
+  }
+}
+
+
 function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 // Register service worker for PWA
