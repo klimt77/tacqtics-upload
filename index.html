@@ -251,21 +251,16 @@
   </div>
 </div>
 
-<!-- Settings overlay -->
+<!-- Settings overlay — full folder browser for default folder -->
 <div class="overlay hidden" id="settingsOverlay" onclick="overlayClick(event,'settingsOverlay')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title" style="padding-bottom:14px">Settings</div>
-    <div class="sheet-scroll">
-      <div style="font-size:13px; color:var(--muted); line-height:1.6; padding:0 0 8px">
-        <strong style="color:var(--white)">Default folder</strong><br>
-        The last folder you choose is automatically saved as default.
-      </div>
-      <div style="font-size:13px; color:var(--muted); padding:8px 0">
-        Current default: <span id="settingsFolder" style="color:var(--white)">—</span>
-      </div>
-    </div>
+    <div class="sheet-title">Default folder</div>
+    <div style="padding:4px 20px 0; font-size:12px; color:var(--muted); flex-shrink:0">Navigate and tap "Set as default" to save.</div>
+    <div class="breadcrumb" id="settingsBreadcrumb"></div>
+    <div class="sheet-scroll" id="settingsList"></div>
     <div class="sheet-footer">
+      <button class="select-here-btn" id="settingsSelectBtn" onclick="setDefaultFolder()">⭐ Set as default</button>
       <button class="cancel-btn" onclick="closeOverlay('settingsOverlay')">Done</button>
     </div>
   </div>
@@ -283,10 +278,15 @@ let accessToken = null;
 let file   = null;
 let folder = null; // {id, name}
 
-// Folder browser state
+// Picker browser state
 let currentFolderId   = 'root';
 let currentFolderName = 'My Drive';
-let breadcrumbs = [{id:'root', name:'My Drive'}]; // stack
+let breadcrumbs = [{id:'root', name:'My Drive'}];
+
+// Settings browser state
+let sFolderId   = 'root';
+let sFolderName = 'My Drive';
+let sBreadcrumbs = [{id:'root', name:'My Drive'}];
 
 // Restore last folder
 try {
@@ -366,7 +366,6 @@ function setFolder(f, save=true) {
   const el = document.getElementById('folderBarName');
   el.textContent = f.name; el.classList.remove('empty');
   if (save) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
-  document.getElementById('settingsFolder').textContent = f.name;
   refreshBtn();
 }
 
@@ -396,7 +395,71 @@ function openFolderPicker() {
 }
 
 function openSettings() {
+  sBreadcrumbs = [{id:'root', name:'My Drive'}];
+  sFolderId   = 'root';
+  sFolderName = 'My Drive';
   document.getElementById('settingsOverlay').classList.remove('hidden');
+  loadSettingsFolder('root', 'My Drive');
+}
+
+async function loadSettingsFolder(folderId, folderName) {
+  const list = document.getElementById('settingsList');
+  list.innerHTML = '<div class="sheet-loading"><div class="spinner"></div> Loading…</div>';
+  sFolderId   = folderId;
+  sFolderName = folderName;
+  document.getElementById('settingsSelectBtn').textContent = `⭐ Set as default — ${folderName}`;
+  renderSettingsBreadcrumb();
+
+  try {
+    const q = encodeURIComponent(`'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
+    const res = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&orderBy=name&pageSize=100`,
+      { headers: { Authorization: 'Bearer ' + accessToken } }
+    );
+    const data = await res.json();
+    const folders = data.files || [];
+    if (folders.length === 0) {
+      list.innerHTML = '<div class="sheet-empty">No subfolders here.<br>You can set this as default.</div>';
+      return;
+    }
+    list.innerHTML = folders.map(f => `
+      <div class="folder-item" onclick="settingsNavigateInto('${f.id}','${escAttr(f.name)}')">
+        <svg class="folder-item-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="folder-item-name">${esc(f.name)}</span>
+        <svg class="folder-item-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = `<div class="sheet-empty" style="color:var(--danger)">Error loading folders</div>`;
+  }
+}
+
+function settingsNavigateInto(id, name) {
+  sBreadcrumbs.push({id, name});
+  loadSettingsFolder(id, name);
+}
+
+function settingsNavigateTo(index) {
+  sBreadcrumbs = sBreadcrumbs.slice(0, index + 1);
+  const crumb = sBreadcrumbs[sBreadcrumbs.length - 1];
+  loadSettingsFolder(crumb.id, crumb.name);
+}
+
+function renderSettingsBreadcrumb() {
+  const bc = document.getElementById('settingsBreadcrumb');
+  bc.innerHTML = sBreadcrumbs.map((c, i) => {
+    const isLast = i === sBreadcrumbs.length - 1;
+    return `${i > 0 ? '<span class="breadcrumb-sep">›</span>' : ''}
+      <span class="breadcrumb-item ${isLast ? 'current' : ''}" ${!isLast ? `onclick="settingsNavigateTo(${i})"` : ''}>${esc(c.name)}</span>`;
+  }).join('');
+}
+
+function setDefaultFolder() {
+  setFolder({id: sFolderId, name: sFolderName});
+  closeOverlay('settingsOverlay');
 }
 
 async function loadFolderContents(folderId, folderName) {
