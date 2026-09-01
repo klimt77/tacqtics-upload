@@ -1,0 +1,24 @@
+{
+  "name": "Tacqtics Upload",
+  "short_name": "Tacqtics",
+  "description": "Upload documents to Google Drive",
+  "start_url": "/tacqtics-upload/",
+  "display": "standalone",
+  "background_color": "#0F1A1F",
+  "theme_color": "#0F1A1F",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
