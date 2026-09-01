@@ -1,9 +1,10 @@
-const CACHE = 'tacqtics-v1';
+const CACHE = 'otacq-v2';
 const ASSETS = [
   '/tacqtics-upload/',
   '/tacqtics-upload/index.html',
   '/tacqtics-upload/logo.png',
-  '/tacqtics-upload/manifest.json'
+  '/tacqtics-upload/manifest.json',
+  '/tacqtics-upload/sw.js'
 ];
 
 self.addEventListener('install', e => {
