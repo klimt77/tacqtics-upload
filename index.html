@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>OTACQ</title>
+<title>TACQOCR</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0F1A1F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="OTACQ">
+<meta name="apple-mobile-web-app-title" content="TACQOCR">
 <link rel="apple-touch-icon" href="logo.png">
 <style>
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -21,165 +21,153 @@
 html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--white); }
 .app { width:100%; max-width:430px; min-height:100vh; margin:0 auto; display:flex; flex-direction:column; }
 
-.header { display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0; gap:10px; }
-.logo-img { width:36px; height:36px; border-radius:8px; object-fit:contain; }
-.logo-name { font-size:14px; font-weight:700; letter-spacing:0.14em; }
-.logo-sub  { font-size:9px; letter-spacing:0.2em; color:var(--green); }
+/* Header */
+.header { display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); gap:12px; }
+.logo-icon { width:36px; height:36px; background:var(--teal); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--green); flex-shrink:0; }
+.logo-text { display:flex; flex-direction:column; gap:2px; }
+.logo-name { font-size:15px; font-weight:700; letter-spacing:0.1em; }
+.logo-sub  { font-size:9px; letter-spacing:0.18em; color:var(--green); }
 
-.auth-banner { margin:16px 20px 0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center; }
-.auth-title { font-size:14px; font-weight:600; }
-.auth-sub   { font-size:12px; color:var(--muted); line-height:1.5; }
-.google-btn { display:flex; align-items:center; gap:10px; background:#fff; color:#1f1f1f; border:none; border-radius:10px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; }
-.auth-connected { margin:12px 20px 0; background:var(--surface); border:1px solid var(--green-dim); border-radius:var(--radius); padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
-.auth-user { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--green); }
-.auth-signout { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline; }
-
-.main { flex:1; display:flex; flex-direction:column; padding:24px 20px; gap:22px; overflow-y:auto; }
+/* Main */
+.main { flex:1; display:flex; flex-direction:column; padding:28px 20px; gap:20px; }
 .section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
 
-.add-doc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.add-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:26px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; color:var(--white); text-align:center; transition:border-color .15s; }
-.add-btn:not(:disabled):hover { border-color:var(--green); background:#182d38; }
-.add-btn:disabled { opacity:0.4; cursor:not-allowed; }
-.add-btn-icon  { width:52px; height:52px; background:var(--teal); border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--green); }
-.add-btn-title { font-size:14px; font-weight:700; }
-.add-btn-sub   { font-size:11px; color:var(--muted); }
+/* Action buttons */
+.action-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.action-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:24px 14px 20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; color:var(--white); text-align:center; transition:border-color .15s, background .15s; }
+.action-btn:hover { border-color:var(--green); background:#182d38; }
+.action-btn:active { background:#1e3540; }
+.action-icon { width:48px; height:48px; background:var(--teal); border-radius:13px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+.action-title { font-size:14px; font-weight:700; }
+.action-sub   { font-size:11px; color:var(--muted); }
 
+/* Preview */
 .preview-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
 .preview-bar  { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
 .preview-bar-name { flex:1; min-width:0; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.clear-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; display:flex; }
-.preview-img { width:100%; max-height:240px; object-fit:contain; background:#0a1318; display:block; }
+.clear-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; display:flex; transition:color .15s; }
+.clear-btn:hover { color:var(--danger); }
+.preview-img { width:100%; max-height:260px; object-fit:contain; background:#0a1318; display:block; }
 .preview-pdf { padding:24px; display:flex; flex-direction:column; align-items:center; gap:8px; }
 .preview-pdf-name { font-size:14px; font-weight:600; }
 .preview-pdf-size { font-size:12px; color:var(--muted); }
 
-.spacer { flex:1; min-height:12px; }
+/* Analyse button */
+.analyse-btn { background:var(--green); color:#071a0e; border:none; border-radius:var(--radius); padding:18px; font-size:15px; font-weight:700; cursor:pointer; width:100%; transition:opacity .15s; letter-spacing:0.02em; }
+.analyse-btn:hover { opacity:.9; }
+.analyse-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; opacity:1; }
 
-.status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; line-height:1.5; }
+/* Status */
+.status-box { border-radius:var(--radius); padding:14px 16px; font-size:13px; display:flex; align-items:center; gap:10px; }
 .status-box.loading { background:#1a2e38; color:var(--muted); }
-.status-box.success { background:#0d2318; color:var(--green); border:1px solid var(--green-dim); }
 .status-box.error   { background:#2a0f0f; color:var(--danger); border:1px solid #5a2020; }
-.status-box a { color:var(--green); }
 .spinner { width:16px; height:16px; flex-shrink:0; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-.upload-to-section { display:flex; flex-direction:column; gap:10px; }
-.folder-bar { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color .15s; }
-.folder-bar:hover { border-color:var(--green-dim); }
-.drive-logo { width:26px; height:26px; flex-shrink:0; }
-.folder-bar-info { flex:1; min-width:0; }
-.folder-bar-label { font-size:10px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
-.folder-bar-name  { font-size:14px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.folder-bar-name.empty { color:var(--muted); font-weight:400; font-size:13px; }
-.folder-chevron { color:var(--muted); flex-shrink:0; }
-
-.send-btn { background:var(--green); color:#071a0e; border:none; border-radius:var(--radius); padding:18px; font-size:15px; font-weight:700; cursor:pointer; width:100%; }
-.send-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
-
-.overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+/* Overlay */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:300; display:flex; align-items:flex-end; justify-content:center; }
 .overlay.hidden { display:none; }
-.sheet { background:var(--surface2); border-radius:22px 22px 0 0; width:100%; max-width:430px; max-height:85vh; display:flex; flex-direction:column; animation:slideUp .22s ease; }
-@keyframes slideUp { from{transform:translateY(50px);opacity:0} to{transform:none;opacity:1} }
+.sheet { background:var(--surface2); border-radius:22px 22px 0 0; width:100%; max-width:430px; max-height:92vh; display:flex; flex-direction:column; animation:slideUp .25s ease; }
+@keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:none;opacity:1} }
 .sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; flex-shrink:0; }
-.sheet-title  { font-size:17px; font-weight:700; padding:16px 20px 0; flex-shrink:0; }
+.sheet-header { padding:16px 20px 0; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
+.sheet-title { font-size:18px; font-weight:700; }
+.sheet-close { background:none; border:none; cursor:pointer; color:var(--muted); padding:4px; display:flex; }
+.sheet-close:hover { color:var(--white); }
+.sheet-scroll { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+.sheet-footer { padding:16px 20px 32px; flex-shrink:0; }
 
-.breadcrumb { display:flex; align-items:center; gap:4px; padding:8px 20px 4px; flex-shrink:0; flex-wrap:wrap; }
-.bc-item { font-size:12px; color:var(--muted); cursor:pointer; }
-.bc-item:last-child { color:var(--white); cursor:default; }
-.bc-sep { color:var(--border); font-size:12px; }
+/* OCR result fields */
+.ocr-field { background:var(--surface); border-radius:12px; padding:14px 16px; }
+.ocr-field-label { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.ocr-field-value { font-size:15px; font-weight:600; color:var(--white); line-height:1.4; }
+.ocr-field-value.empty { color:var(--muted); font-weight:400; font-size:13px; font-style:italic; }
 
-.new-folder-trigger { padding:0 20px 8px; flex-shrink:0; }
-.new-folder-trigger button { width:100%; background:none; border:1.5px dashed var(--border); border-radius:12px; padding:11px; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
-.new-folder-form { display:none; padding:0 20px 8px; flex-shrink:0; }
-.new-folder-form .row { display:flex; gap:8px; }
-.new-folder-form input { flex:1; background:var(--surface); border:1.5px solid var(--green-dim); border-radius:10px; padding:12px 14px; color:var(--white); font-size:14px; outline:none; }
-.new-folder-form .btn-create { background:var(--green); border:none; border-radius:10px; padding:12px 16px; color:#071a0e; font-weight:700; font-size:14px; cursor:pointer; }
-.new-folder-form .btn-cancel { background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); cursor:pointer; }
+/* Amount highlight */
+.ocr-field.highlight { border:1.5px solid var(--green-dim); }
+.ocr-field.highlight .ocr-field-value { color:var(--green); font-size:20px; }
 
-.sheet-scroll { flex:1; overflow-y:auto; padding:4px 20px 0; display:flex; flex-direction:column; gap:6px; }
-.sheet-footer { padding:14px 20px; flex-shrink:0; display:flex; gap:8px; }
+/* Confidence badge */
+.conf-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; margin-top:6px; }
+.conf-high   { background:#0d2318; color:var(--green); }
+.conf-medium { background:#2a2010; color:#f0b429; }
+.conf-low    { background:#2a0f0f; color:var(--danger); }
 
-.folder-item { display:flex; align-items:center; gap:10px; padding:13px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; color:var(--white); transition:border-color .15s; font-size:14px; }
-.folder-item:hover { border-color:var(--green-dim); }
-.fi-icon  { color:var(--muted); flex-shrink:0; }
-.fi-name  { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fi-arrow { color:var(--muted); flex-shrink:0; }
+/* Divider */
+.ocr-divider { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:4px 0; border-bottom:1px solid var(--border); }
 
-.sheet-msg { padding:24px 0; text-align:center; color:var(--muted); font-size:13px; }
-.sheet-err { padding:24px 0; text-align:center; color:var(--danger); font-size:13px; }
-
-.btn-save   { flex:1; background:var(--teal); border:1.5px solid var(--green-dim); border-radius:12px; padding:14px; color:var(--green); font-size:14px; font-weight:600; cursor:pointer; }
-.btn-cancel { flex:1; background:none; border:1.5px solid var(--border); border-radius:12px; padding:14px; color:var(--muted); font-size:14px; cursor:pointer; }
+/* Close button */
+.close-btn { background:none; border:1.5px solid var(--border); border-radius:var(--radius); padding:15px; color:var(--white); font-size:14px; font-weight:600; cursor:pointer; width:100%; transition:border-color .15s; }
+.close-btn:hover { border-color:var(--muted); }
 
 input[type="file"] { display:none; }
-.hidden { display:none !important; }
-
-/* Toast */
-.toast-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; pointer-events:none; }
-.toast-overlay.show { opacity:1; pointer-events:auto; }
-.toast-box { background:var(--surface2); border:2px solid var(--green); border-radius:20px; padding:28px 24px; text-align:center; width:85%; max-width:320px; }
-.toast-icon { font-size:44px; margin-bottom:12px; }
-.toast-title { font-size:17px; font-weight:700; color:var(--green); margin-bottom:6px; }
-.toast-folder { font-size:13px; color:var(--muted); margin-bottom:20px; }
-.toast-link { display:block; background:var(--green); color:#071a0e; border:none; border-radius:10px; padding:13px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; margin-bottom:10px; }
-.toast-close { background:none; border:1.5px solid var(--border); border-radius:10px; padding:12px; color:var(--muted); font-size:14px; cursor:pointer; width:100%; }
 </style>
 </head>
 <body>
 <div class="app">
 
   <header class="header">
-    <img class="logo-img" src="logo.png" alt="" onerror="this.style.display='none'">
-    <div>
-      <div class="logo-name">TACQTICS</div>
-      <div class="logo-sub">Tech &amp; Talent</div>
+    <div class="logo-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="9" y1="13" x2="15" y2="13"/>
+        <line x1="9" y1="17" x2="13" y2="17"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name">TACQOCR</div>
+      <div class="logo-sub">Invoice Scanner</div>
     </div>
   </header>
 
-  <div class="auth-banner" id="authBanner">
-    <div class="auth-title">Connect Google Drive</div>
-    <div class="auth-sub">Sign in to upload files directly to your Drive.</div>
-    <button class="google-btn" onclick="signIn()">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
-      Sign in with Google
-    </button>
+  <!-- API Key banner -->
+  <div id="keyBanner" style="margin:16px 20px 0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:10px;">
+    <div style="font-size:13px; font-weight:600;">🔑 Gemini API Key</div>
+    <div style="font-size:12px; color:var(--muted); line-height:1.5;">Enter your free Gemini API key from <strong>aistudio.google.com</strong>. Saved locally on your device only.</div>
+    <div style="display:flex; gap:8px;">
+      <input id="keyInput" type="password" placeholder="AIza..." style="flex:1; background:var(--bg); border:1.5px solid var(--border); border-radius:10px; padding:11px 14px; color:var(--white); font-size:13px; outline:none;">
+      <button onclick="saveKey()" style="background:var(--green); border:none; border-radius:10px; padding:11px 16px; color:#071a0e; font-weight:700; font-size:13px; cursor:pointer;">Save</button>
+    </div>
   </div>
 
-  <div class="auth-connected hidden" id="authConnected">
-    <div class="auth-user">
+  <!-- Key set indicator -->
+  <div id="keySet" class="hidden" style="margin:12px 20px 0; background:var(--surface); border:1px solid var(--green-dim); border-radius:var(--radius); padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
+    <div style="font-size:13px; color:var(--green); display:flex; align-items:center; gap:8px;">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      Connected to Google Drive
+      Gemini API key configured
     </div>
-    <button class="auth-signout" onclick="signOut()">Sign out</button>
+    <button onclick="clearKey()" style="background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline;">Change</button>
   </div>
 
   <main class="main">
-    <section>
-      <div class="section-label">Add document</div>
-      <div class="add-doc-row">
-        <button class="add-btn" id="cameraBtn" onclick="openCamera()" disabled>
-          <div class="add-btn-icon">
-            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+    <div>
+      <div class="section-label">Scan invoice</div>
+      <div class="action-row">
+        <button class="action-btn" onclick="openCamera()">
+          <div class="action-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
             </svg>
           </div>
-          <div class="add-btn-title">Use camera</div>
-          <div class="add-btn-sub">Take a photo</div>
+          <div class="action-title">Camera</div>
+          <div class="action-sub">Take a photo</div>
         </button>
-        <button class="add-btn" id="fileBtn" onclick="openFilePicker()" disabled>
-          <div class="add-btn-icon">
-            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <button class="action-btn" onclick="openFile()">
+          <div class="action-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
-              <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
             </svg>
           </div>
-          <div class="add-btn-title">From device</div>
-          <div class="add-btn-sub">Photo or PDF</div>
+          <div class="action-title">From device</div>
+          <div class="action-sub">Photo or PDF</div>
         </button>
       </div>
-    </section>
+    </div>
 
     <div class="preview-wrap" id="previewWrap" style="display:none">
       <div class="preview-bar">
@@ -198,70 +186,28 @@ input[type="file"] { display:none; }
       <span id="statusMsg"></span>
     </div>
 
-    <div class="spacer"></div>
-
-    <section class="upload-to-section">
-      <div class="section-label">Upload to</div>
-      <div class="folder-bar" onclick="openPicker()">
-        <svg class="drive-logo" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
-          <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
-          <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47"/>
-          <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
-          <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
-          <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
-          <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 27h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
-        </svg>
-        <div class="folder-bar-info">
-          <div class="folder-bar-label">Google Drive</div>
-          <div class="folder-bar-name empty" id="folderBarName">Choose a folder…</div>
-        </div>
-        <svg class="folder-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
-      <button class="send-btn" id="sendBtn" onclick="doUpload()" disabled>Send to Drive</button>
-    </section>
+    <button class="analyse-btn" id="analyseBtn" onclick="analyse()" disabled>
+      🔍 Analyse invoice
+    </button>
   </main>
 </div>
 
-<!-- Folder picker -->
-<div class="overlay hidden" id="pickerOverlay" onclick="if(event.target===this)closeOverlay()">
+<!-- OCR Results popup -->
+<div class="overlay hidden" id="resultOverlay" onclick="if(event.target===this)closeResult()">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Choose folder</div>
-    <div class="breadcrumb" id="breadcrumb"></div>
-
-    <div class="new-folder-trigger" id="nfTrigger">
-      <button onclick="showNFForm()">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New folder here
+    <div class="sheet-header">
+      <div class="sheet-title">Invoice data</div>
+      <button class="sheet-close" onclick="closeResult()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
       </button>
     </div>
-    <div class="new-folder-form" id="nfForm">
-      <div class="row">
-        <input id="nfInput" type="text" placeholder="Folder name…" onkeydown="if(event.key==='Enter')doCreateFolder()">
-        <button class="btn-create" id="nfCreateBtn" onclick="doCreateFolder()">Create</button>
-        <button class="btn-cancel" onclick="hideNFForm()">✕</button>
-      </div>
-    </div>
-
-    <div class="sheet-scroll" id="folderList"></div>
-
+    <div class="sheet-scroll" id="resultContent"></div>
     <div class="sheet-footer">
-      <button class="btn-save" id="saveHereBtn" onclick="saveHere()">📁 Save here</button>
-      <button class="btn-cancel" onclick="closeOverlay()">Cancel</button>
+      <button class="close-btn" onclick="closeResult()">Close</button>
     </div>
-  </div>
-</div>
-
-<!-- Success toast -->
-<div class="toast-overlay" id="toastOverlay">
-  <div class="toast-box">
-    <div class="toast-icon">✅</div>
-    <div class="toast-title">Upload réussi !</div>
-    <div class="toast-folder" id="toastFolder"></div>
-    <a class="toast-link" id="toastLink" target="_blank">Ouvrir dans Drive →</a>
-    <button class="toast-close" onclick="closeToast()">Fermer</button>
   </div>
 </div>
 
@@ -271,118 +217,66 @@ input[type="file"] { display:none; }
 <script>
 'use strict';
 
-const CLIENT_ID   = '831194316691-rot3jm27a3dbrdul538lfa7q8e877jo7.apps.googleusercontent.com';
-const SCOPES      = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
-const REDIRECT    = 'https://klimt77.github.io/tacqtics-upload/';
-const TOKEN_KEY   = 'tq_token';
-const EXPIRY_KEY  = 'tq_expiry';
-const FOLDER_KEY  = 'tq_folder';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=';
+const KEY_STORAGE = 'tq_gemini_key';
 
-// ── State ──
-let token  = null;
-let file   = null;
-let folder = null;
-
-// Folder browser
-let stack = [{id:'root', name:'My Drive'}];
-function curId()   { return stack[stack.length-1].id; }
-function curName() { return stack[stack.length-1].name; }
-
-// ── Helpers ──
-function showToast(folderName, link) {
-  document.getElementById('toastFolder').textContent = 'Sauvegardé dans : ' + folderName;
-  document.getElementById('toastLink').href = link;
-  document.getElementById('toastOverlay').classList.add('show');
-}
-function closeToast() {
-  document.getElementById('toastOverlay').classList.remove('show');
-}
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escQ(s) {
-  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+// ── API Key management ──
+function saveKey() {
+  var k = document.getElementById('keyInput').value.trim();
+  if (!k) return;
+  localStorage.setItem(KEY_STORAGE, k);
+  document.getElementById('keyInput').value = '';
+  showKeySet();
 }
 
-// ── OAuth ──
-function signIn() {
-  const p = new URLSearchParams({
-    client_id: CLIENT_ID,
-    redirect_uri: REDIRECT,
-    response_type: 'token',
-    scope: SCOPES,
-    prompt: 'consent'
-  });
-  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + p;
+function clearKey() {
+  localStorage.removeItem(KEY_STORAGE);
+  showKeyBanner();
 }
 
-function signOut() {
-  token = null;
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(EXPIRY_KEY);
-  document.getElementById('authBanner').classList.remove('hidden');
-  document.getElementById('authConnected').classList.add('hidden');
-  document.getElementById('cameraBtn').disabled = true;
-  document.getElementById('fileBtn').disabled   = true;
-  refreshBtn();
+function getKey() {
+  return localStorage.getItem(KEY_STORAGE);
 }
 
-function onSignedIn() {
-  document.getElementById('authBanner').classList.add('hidden');
-  document.getElementById('authConnected').classList.remove('hidden');
-  document.getElementById('cameraBtn').disabled = false;
-  document.getElementById('fileBtn').disabled   = false;
-  refreshBtn();
+function showKeySet() {
+  document.getElementById('keyBanner').classList.add('hidden');
+  document.getElementById('keySet').classList.remove('hidden');
 }
 
-// Handle OAuth redirect — token in hash
-(function initAuth() {
-  if (window.location.hash) {
-    const p = new URLSearchParams(window.location.hash.slice(1));
-    const t = p.get('access_token');
-    const e = parseInt(p.get('expires_in') || '3600');
-    if (t) {
-      token = t;
-      localStorage.setItem(TOKEN_KEY, t);
-      localStorage.setItem(EXPIRY_KEY, Date.now() + (e - 120) * 1000);
-      history.replaceState(null, '', window.location.pathname);
-      onSignedIn();
-      return;
-    }
-  }
-  // Restore saved token
-  const t = localStorage.getItem(TOKEN_KEY);
-  const e = parseInt(localStorage.getItem(EXPIRY_KEY) || '0');
-  if (t && Date.now() < e) {
-    token = t;
-    onSignedIn();
-  }
-  // Restore saved folder
-  try {
-    const f = JSON.parse(localStorage.getItem(FOLDER_KEY));
-    if (f && f.id && f.name) setFolder(f, false);
-  } catch(_) {}
+function showKeyBanner() {
+  document.getElementById('keyBanner').classList.remove('hidden');
+  document.getElementById('keySet').classList.add('hidden');
+}
+
+// Init key state
+(function() {
+  if (getKey()) showKeySet(); else showKeyBanner();
 })();
 
-// ── File ──
-document.getElementById('cameraInput').addEventListener('change', e => onFile(e.target.files[0]));
-document.getElementById('fileInput').addEventListener('change',   e => onFile(e.target.files[0]));
-function openCamera()     { document.getElementById('cameraInput').click(); }
-function openFilePicker() { document.getElementById('fileInput').click(); }
+let file = null;
+
+// ── File handling ──
+document.getElementById('cameraInput').addEventListener('change', function(e) { onFile(e.target.files[0]); });
+document.getElementById('fileInput').addEventListener('change',   function(e) { onFile(e.target.files[0]); });
+function openCamera() { document.getElementById('cameraInput').click(); }
+function openFile()   { document.getElementById('fileInput').click(); }
 
 function onFile(f) {
   if (!f) return;
   file = f;
   document.getElementById('previewName').textContent = f.name;
-  const body = document.getElementById('previewBody');
+  var body = document.getElementById('previewBody');
   if (f.type.startsWith('image/')) {
     body.innerHTML = '<img class="preview-img" src="' + URL.createObjectURL(f) + '" alt="">';
   } else {
-    body.innerHTML = '<div class="preview-pdf"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="preview-pdf-name">' + esc(f.name) + '</div><div class="preview-pdf-size">' + (f.size/1024).toFixed(0) + ' KB · PDF</div></div>';
+    body.innerHTML = '<div class="preview-pdf">' +
+      '<svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+      '<div class="preview-pdf-name">' + esc(f.name) + '</div>' +
+      '<div class="preview-pdf-size">' + (f.size/1024).toFixed(0) + ' KB</div></div>';
   }
   document.getElementById('previewWrap').style.display = 'block';
+  document.getElementById('analyseBtn').disabled = false;
   clearStatus();
-  refreshBtn();
 }
 
 function clearFile() {
@@ -390,195 +284,148 @@ function clearFile() {
   document.getElementById('previewWrap').style.display = 'none';
   document.getElementById('cameraInput').value = '';
   document.getElementById('fileInput').value   = '';
+  document.getElementById('analyseBtn').disabled = true;
   clearStatus();
-  refreshBtn();
-}
-
-function setFolder(f, save) {
-  folder = f;
-  const el = document.getElementById('folderBarName');
-  el.textContent = f.name;
-  el.classList.remove('empty');
-  if (save !== false) localStorage.setItem(FOLDER_KEY, JSON.stringify(f));
-  refreshBtn();
-}
-
-function refreshBtn() {
-  document.getElementById('sendBtn').disabled = !(file && folder && token);
 }
 
 // ── Status ──
-function showStatus(type, html) {
-  const b = document.getElementById('statusBox');
+function showStatus(type, msg) {
+  var b = document.getElementById('statusBox');
   b.className = 'status-box ' + type;
   b.style.display = 'flex';
   document.getElementById('statusSpinner').style.display = type === 'loading' ? 'flex' : 'none';
-  document.getElementById('statusMsg').innerHTML = html;
+  document.getElementById('statusMsg').textContent = msg;
 }
 function clearStatus() { document.getElementById('statusBox').style.display = 'none'; }
 
-// ── Folder picker ──
-function openPicker() {
-  stack = [{id:'root', name:'My Drive'}];
-  document.getElementById('pickerOverlay').classList.remove('hidden');
-  hideNFForm();
-  loadFolder();
-}
-function closeOverlay() {
-  document.getElementById('pickerOverlay').classList.add('hidden');
-}
-function saveHere() {
-  setFolder({id: curId(), name: curName()});
-  closeOverlay();
+// ── Result popup ──
+function closeResult() {
+  document.getElementById('resultOverlay').classList.add('hidden');
 }
 
-function renderBreadcrumb() {
-  document.getElementById('breadcrumb').innerHTML = stack.map(function(c, i) {
-    var isLast = i === stack.length - 1;
-    return (i > 0 ? '<span class="bc-sep">›</span>' : '') +
-      '<span class="bc-item"' + (!isLast ? ' onclick="navTo(' + i + ')"' : '') + '>' + esc(c.name) + '</span>';
-  }).join('');
-  document.getElementById('saveHereBtn').textContent = '📁 Save here — ' + esc(curName());
+function showResult(data) {
+  var html = '';
+
+  // Main amount — highlighted
+  if (data.total_ttc) {
+    html += field('Total TTC', data.total_ttc, true);
+  }
+
+  html += '<div class="ocr-divider">Invoice details</div>';
+  html += field('Invoice number', data.invoice_number);
+  html += field('Date', data.date);
+  html += field('Due date', data.due_date);
+
+  html += '<div class="ocr-divider">Supplier</div>';
+  html += field('Name', data.supplier_name);
+  html += field('Address', data.supplier_address);
+  html += field('VAT number', data.supplier_vat);
+
+  html += '<div class="ocr-divider">Client</div>';
+  html += field('Name', data.client_name);
+  html += field('Address', data.client_address);
+
+  html += '<div class="ocr-divider">Amounts</div>';
+  html += field('Total HT', data.total_ht);
+  html += field('VAT amount', data.vat_amount);
+  html += field('VAT rate', data.vat_rate);
+  html += field('Currency', data.currency);
+
+  if (data.description) {
+    html += '<div class="ocr-divider">Description</div>';
+    html += field('Services / items', data.description);
+  }
+
+  document.getElementById('resultContent').innerHTML = html;
+  document.getElementById('resultOverlay').classList.remove('hidden');
 }
 
-function navTo(i) {
-  stack = stack.slice(0, i + 1);
-  hideNFForm();
-  loadFolder();
+function field(label, value, highlight) {
+  var empty = !value || value === 'N/A' || value === '' || value === 'null';
+  var cls = 'ocr-field' + (highlight ? ' highlight' : '');
+  var valCls = 'ocr-field-value' + (empty ? ' empty' : '');
+  var display = empty ? 'Not found' : esc(value);
+  return '<div class="' + cls + '">' +
+    '<div class="ocr-field-label">' + esc(label) + '</div>' +
+    '<div class="' + valCls + '">' + display + '</div>' +
+    '</div>';
 }
 
-function navInto(id, name) {
-  stack.push({id: id, name: name});
-  hideNFForm();
-  loadFolder();
-}
-
-async function loadFolder() {
-  renderBreadcrumb();
-  const list = document.getElementById('folderList');
-  list.innerHTML = '<div class="sheet-msg"><div class="spinner" style="display:inline-block;margin-right:8px"></div>Loading…</div>';
-
-  // Test: first check if token works at all
-  try {
-    var testRes = await fetch('https://www.googleapis.com/drive/v3/about?fields=user', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    var testData = await testRes.json();
-    if (!testRes.ok) {
-      list.innerHTML = '<div class="sheet-err">Token invalid: ' + esc(testData.error && testData.error.message ? testData.error.message : JSON.stringify(testData)) + '</div>';
-      return;
-    }
-  } catch(e) {
-    list.innerHTML = '<div class="sheet-err">Network error on token test: ' + esc(e.message) + '</div>';
+// ── Analyse ──
+async function analyse() {
+  if (!file) return;
+  var key = getKey();
+  if (!key) {
+    showStatus('error', 'Please enter your Gemini API key first.');
     return;
   }
+  document.getElementById('analyseBtn').disabled = true;
+  showStatus('loading', 'Analysing invoice…');
 
   try {
-    var folderId = curId();
-    var query = folderId === 'root'
-      ? "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
-      : "mimeType='application/vnd.google-apps.folder' and '" + folderId + "' in parents and trashed=false";
+    var b64  = await toBase64(file);
+    var mime = file.type || 'image/jpeg';
 
-    var url = 'https://www.googleapis.com/drive/v3/files?pageSize=100&orderBy=name&fields=files(id,name)&q=' + encodeURIComponent(query);
+    var prompt = "You are an invoice OCR expert. Extract all invoice data and return ONLY a valid JSON object with these exact keys: {\"is_invoice\": true, \"invoice_number\": \"\", \"date\": \"\", \"due_date\": \"\", \"supplier_name\": \"\", \"supplier_address\": \"\", \"supplier_vat\": \"\", \"client_name\": \"\", \"client_address\": \"\", \"total_ht\": \"\", \"vat_rate\": \"\", \"vat_amount\": \"\", \"total_ttc\": \"\", \"currency\": \"\", \"description\": \"\"}. If NOT an invoice, return: {\"is_invoice\": false}. Use N/A for fields not found. Return only JSON, no markdown.";
 
-    var res = await fetch(url, {
-      headers: { 'Authorization': 'Bearer ' + token }
+    var payload = {
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mime, data: b64 } },
+          { text: prompt }
+        ]
+      }]
+    };
+
+    var res = await fetch(GEMINI_URL + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
       var err = await res.json();
-      list.innerHTML = '<div class="sheet-err">Drive API Error ' + res.status + ': ' + esc(err.error && err.error.message ? err.error.message : JSON.stringify(err)) + '</div>';
+      throw new Error(err.error ? err.error.message : 'API error ' + res.status);
+    }
+
+    var result = await res.json();
+    var text = result.candidates[0].content.parts[0].text;
+    var clean = text.replace(/```json|```/g, '').trim();
+    var parsed = JSON.parse(clean);
+
+    clearStatus();
+
+    if (!parsed.is_invoice) {
+      showStatus('error', '⚠️ This document does not appear to be an invoice or receipt. Please try with a valid invoice.');
+      document.getElementById('analyseBtn').disabled = false;
       return;
     }
 
-    var data = await res.json();
-    var folders = data.files || [];
-
-    if (folders.length === 0) {
-      list.innerHTML = '<div class="sheet-msg">No subfolders — you can save here.</div>';
-      return;
-    }
-
-    list.innerHTML = folders.map(function(f) {
-      return '<div class="folder-item" onclick="navInto(\'' + escQ(f.id) + '\',\'' + escQ(f.name) + '\')">' +
-        '<svg class="fi-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>' +
-        '<span class="fi-name">' + esc(f.name) + '</span>' +
-        '<svg class="fi-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>' +
-        '</div>';
-    }).join('');
+    showResult(parsed);
 
   } catch(e) {
-    list.innerHTML = '<div class="sheet-err">Error: ' + esc(e.message) + '</div>';
+    showStatus('error', 'Error: ' + e.message);
   }
+
+  document.getElementById('analyseBtn').disabled = false;
 }
 
-// ── New folder ──
-function showNFForm() {
-  document.getElementById('nfTrigger').style.display = 'none';
-  document.getElementById('nfForm').style.display = 'block';
-  document.getElementById('nfInput').value = '';
-  document.getElementById('nfInput').focus();
-}
-function hideNFForm() {
-  document.getElementById('nfTrigger').style.display = 'block';
-  document.getElementById('nfForm').style.display = 'none';
-}
-
-async function doCreateFolder() {
-  var name = document.getElementById('nfInput').value.trim();
-  if (!name) return;
-  var btn = document.getElementById('nfCreateBtn');
-  btn.textContent = '…'; btn.disabled = true;
-  try {
-    var res = await fetch('https://www.googleapis.com/drive/v3/files', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder', parents: [curId()] })
-    });
-    if (!res.ok) throw new Error('Failed');
-    var data = await res.json();
-    hideNFForm();
-    navInto(data.id, data.name);
-  } catch(e) {
-    btn.textContent = 'Create'; btn.disabled = false;
-    alert('Could not create folder: ' + e.message);
-  }
-}
-
-// ── Upload ──
-async function doUpload() {
-  if (!file || !folder || !token) return;
-  document.getElementById('sendBtn').disabled = true;
-  showStatus('loading', 'Uploading to Drive…');
-  try {
-    var meta = JSON.stringify({ name: file.name, parents: [folder.id] });
-    var form = new FormData();
-    form.append('metadata', new Blob([meta], {type:'application/json'}));
-    form.append('file', file);
-    var res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
-      body: form
-    });
-    if (!res.ok) {
-      var err = await res.json();
-      throw new Error(err.error && err.error.message ? err.error.message : 'Upload failed');
-    }
-    var data = await res.json();
-    var link = data.webViewLink || ('https://drive.google.com/file/d/' + data.id + '/view');
-    showToast(folder.name, link);
-    clearFile();
-  } catch(e) {
-    showStatus('error', 'Upload failed: ' + esc(e.message));
-  }
-  refreshBtn();
-}
-
-// Unregister any old service workers
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(regs) {
-    regs.forEach(function(r) { r.unregister(); });
+function toBase64(f) {
+  return new Promise(function(res, rej) {
+    var r = new FileReader();
+    r.onload  = function() { res(r.result.split(',')[1]); };
+    r.onerror = function() { rej(new Error('Read failed')); };
+    r.readAsDataURL(f);
   });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Unregister old service workers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(r) { r.forEach(function(sw) { sw.unregister(); }); });
 }
 </script>
 </body>
