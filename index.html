@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TACQOCR v3</title>
+<title>TACQOCR v4</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 :root {
@@ -88,7 +88,7 @@ input[type="file"] { display:none; }
       <div class="logo-name">TACQOCR</div>
       <div class="logo-sub">Invoice Scanner</div>
     </div>
-    <div class="version">v3 · gemini-2.0-flash</div>
+    <div class="version">v4 · gemini-1.5-flash</div>
   </header>
 
   <div class="key-banner" id="keyBanner">
@@ -182,9 +182,9 @@ input[type="file"] { display:none; }
 'use strict';
 
 // ── IMPORTANT: Model version clearly shown ──
-const MODEL    = 'gemini-2.0-flash';
-const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=';
-const KEY_STORAGE = 'tq_gemini_key_v3';
+const MODEL    = 'gemini-1.5-flash';
+const BASE_URL = 'https://generativelanguage.googleapis.com/v1/models/' + MODEL + ':generateContent?key=';
+const KEY_STORAGE = 'tq_gemini_key_v4';
 
 console.log('TACQOCR v3 loaded, model:', MODEL);
 
